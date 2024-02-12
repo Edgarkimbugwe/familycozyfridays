@@ -14,6 +14,7 @@ GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
 SHEET = GSPREAD_CLIENT.open('family_cozy_fridays')
 # Get the data from the sheet as a list of lists
 
+activity_scores = SHEET.worksheet('activity_scores')
 
 data = activity_scores.get_all_values()
 
