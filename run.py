@@ -27,7 +27,16 @@ def add_activity(date, activity, players):
     activity_id = int(last_activity_id) + 1 if last_activity_id else 1
 
     # Prepare data to append to the worksheet
-    row_data = [activity_id, date, activity] + ['' for _ in range(len(players))]
+    row_data = [activity_id, date, activity]
+
+    # Get existing headers from the first row
+    existing_headers = worksheet.row_values(1)
+
+    # Append the players names to the existing headers
+    updated_headers = existing_headers + players
+
+    # Write the updated headers back to the first row of the worksheet
+    worksheet.update('A1:Z1', [updated_headers])
 
     # Append the row to the worksheet
     worksheet.append_row(row_data)
@@ -92,11 +101,17 @@ def main():
             activity.id = int(input("Enter activity ID: "))
             player = input("Enter player name: ")
             score = int(input("Enter score: "))
-            update_scores(activity_id, players, scores)
+            update_scores()(activity_id, players, scores)
         elif choice == '3':
-            overall_scores = calculate_overall_scores()
+            overall_scores = calculate_overall_scores
             print("Overall Scores:")
             for player, score in overall_scores.items():
                 print(f"{player}: {score}")
         elif choice == '4':
-            print()
+            print("Exiting...")
+            break
+        else:
+            print("Invalid choice, please try again.")
+
+if __name__ == "__main__":
+    main()
