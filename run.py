@@ -14,8 +14,19 @@ GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
 SHEET = GSPREAD_CLIENT.open('family_cozy_fridays')
 # Get the data from the sheet as a list of lists
 
-activity_scores = SHEET.worksheet('activity_scores')
 
-data = activity_scores.get_all_values()
+#function to add data in the activity_scores worksheet
+def add_activity(date, activity, players):
+    worksheet = SHEET.get_worksheet(0)
 
-print(data)
+    last_activity_id = worksheet.cell(worksheet.row_count, 1).value
+
+    activity_id = int(last_activity_id) + 1 if last_activity_id else 1
+
+    row_data = [activity_id, date, activity] + ['' for _ in range(len(players))]
+
+    worksheet.append_row(row_data)
+
+
+print(add_activity)
+
