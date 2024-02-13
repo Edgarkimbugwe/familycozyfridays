@@ -72,3 +72,31 @@ def calculate_overall_scores():
             overall_scores[players[i-1]] += int(player_scores) if player_score else 0
 
     return overall_scores
+
+
+# Main function to handle user input
+def main():
+    while True:
+        print("\n1. Add Activity and Scores")
+        print("2. Update Scores")
+        print("3. Overall Scores")
+        print("4. Exit")
+        choice = input("Enter your choice: ")
+
+        if choice == '1':
+            date = input("Enter the date: ")
+            activity = input("Enter the activity/game: ")
+            players = input("Enter player names (separated by coma): ").split(',')
+            add_activity(date, activity, players)
+        elif choice == '2':
+            activity.id = int(input("Enter activity ID: "))
+            player = input("Enter player name: ")
+            score = int(input("Enter score: "))
+            update_scores(activity_id, players, scores)
+        elif choice == '3':
+            overall_scores = calculate_overall_scores()
+            print("Overall Scores:")
+            for player, score in overall_scores.items():
+                print(f"{player}: {score}")
+        elif choice == '4':
+            print()
