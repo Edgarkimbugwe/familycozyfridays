@@ -28,7 +28,7 @@ def add_activity(date, activity, players):
 
     # Prepare data to append to the worksheet
     row_data = [activity_id, date, activity] + ['' for _ in range(len(players))]
-    
+
     # Append the row to the worksheet
     worksheet.append_row(row_data)
 
@@ -51,3 +51,24 @@ def update_scores(activity_id, players, scores):
         worksheet.update_cell(1, player_column, player)
         worksheet.update_cell(activity_id + 1, player_column, score)
 
+
+# Function to calculate overall scores
+def calculate_overall_scores():
+    # Get the overall scores worksheet
+    worksheet = SHEET.get_worksheet(1)
+
+    # Get all players from the first row (excluding the 'ID' column)
+    players = worksheet.row_values(1)[1:]
+
+    # Get all activities and scores from the activity_scores worksheet
+    activity_scores = SHEET.get_worksheet(0).get_all_values()[1:]
+
+    # Initialize a dictionary to score total scores for each player
+    overall_scores = {players: 0 for player in players}
+
+    # Iterate over each activity and update overall scores for each player
+    for activity in activity_scores:
+        for i, player_scores in enumerate(activity[3:], start=1):
+            overall_scores[players[i-1]] += int(player_scores) if player_score else 0
+
+    return overall_scores
