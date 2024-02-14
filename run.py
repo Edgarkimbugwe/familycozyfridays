@@ -42,18 +42,28 @@ def add_activity(date, activity, players):
     worksheet.append_row(row_data)
 
 
-# function to update scores for a specific activity
-def update_scores(activity_id, players, scores):
+# Function to update scores for a specific activity
+def update_scores(activity_id, player, score):
     # Get the Activity_scores worksheet
     worksheet = SHEET.get_worksheet(0)
 
+    # Get the list of player names from the first row of the worksheet
+    players = worksheet.row_values(1)
+
+    # Remove leading and trailing spaces from player names
+    players_cleaned = [p.strip().lower() for p in players]
+
+    if player.strip().lower() not in players_cleaned:
+        print(f"'{player}' is not registered as a player. Please add the name as a player first.")
+        return
+
     try:
-        # Find the column index corresponding to the player
-        player_column = worksheet.find(player).col
+        # Find the column index corresponding to the player (case-insensitive)
+        player_column = players_cleaned.index(player.strip().lower()) + 1
 
         # Update the score for the players in the specified activity row
         worksheet.update_cell(activity_id + 1, player_column, score)
-    except gspread.exceptions.CellNotFound:
+    except ValueError:
         # If player not found, add a new column for the player
         worksheet.add_cols(1)
         player_column = worksheet.col_count
@@ -86,7 +96,7 @@ def calculate_overall_scores():
 # Main function to handle user input
 def main():
     while True:
-        print("\n1. Add Activity and Scores")
+        print("\n1. Add Activity and Players")
         print("2. Update Scores")
         print("3. Overall Scores")
         print("4. Exit")
@@ -98,10 +108,10 @@ def main():
             players = input("Enter player names (separated by coma): ").split(',')
             add_activity(date, activity, players)
         elif choice == '2':
-            activity.id = int(input("Enter activity ID: "))
+            activity_id = int(input("Enter activity ID: "))
             player = input("Enter player name: ")
             score = int(input("Enter score: "))
-            update_scores()(activity_id, players, scores)
+            update_scores(activity_id, player, score)
         elif choice == '3':
             overall_scores = calculate_overall_scores
             print("Overall Scores:")
