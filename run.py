@@ -14,16 +14,18 @@ GSPREAD_CLIENT = gspread.authorize(SCOPED_CREDS)
 SHEET = GSPREAD_CLIENT.open('family_cozy_fridays')
 # Get the data from the sheet as a list of lists
 
+players = []
 
-def add_players(players):
+def add_players(players_list):
     worksheet = SHEET.get_worksheet(0)
 
     existing_headers = worksheet.row_values(1)
 
-    for player in players:
+    for player in players_list:
         player_lower = player.strip().lower()
         if player_lower not in map(str.lower, existing_headers):
             existing_headers.append(player.strip())
+            players.append(player.strip())
 
     # Update the headers row with the updated list of players
     header_range = f'A1:{chr(ord("A") + len(existing_headers) - 1)}1'
@@ -47,27 +49,29 @@ def add_activity(date, activity):
 
     worksheet.append_row(row_data)
 
-
 def delete_player(player):
-    worksheet = SHEET.get_worksheet(0)
+    activity_worksheet = SHEET.get_worksheet(0)
+    leaderboard_worksheet = SHEET.get_worksheet(1)
 
-    existing_headers = worksheet.row_values(1)
+    existing_headers = activity_worksheet.row_values(1)
 
     player_lower = player.strip().lower()
     if player_lower in map(str.lower, existing_headers):
-        existing_headers = [header for header in existing_headers if header.strip().lower() != player_lower]
+        player_column = existing_headers.index(player) + 1
 
-        # Clear the header row
-        worksheet.update(range_name='B1:ZZ1', values=[[''] * len(existing_headers)])
+        # Delete the player's column from the activity worksheet
+        activity_worksheet.delete_columns(player_column)
 
-        # Update the headers row with the updated list of players
-        for i, header in enumerate(existing_headers, start=1):
-            worksheet.update_cell(1, i, header)
+        # Remove the player from the players list
+        global players
+        players.remove(player.strip())
+
+        # Update the leaderboard worksheet to remove the player's total score
+        calculate_totals()
 
         print(f"Player '{player}' deleted successfully.")
     else:
         print(f"Player '{player}' not found.")
-
 
 # Function to update scores for a specific activity
 def update_scores(activity_id, player, score):
@@ -75,10 +79,10 @@ def update_scores(activity_id, player, score):
     worksheet = SHEET.get_worksheet(0)
 
     # Get the list of player names from the first row of the worksheet
-    players = worksheet.row_values(1)
+    players_list = worksheet.row_values(1)
 
     # Remove leading and trailing spaces from player names
-    players_cleaned = [p.strip().lower() for p in players]
+    players_cleaned = [p.strip().lower() for p in players_list]
 
     if player.strip().lower() not in players_cleaned:
         print(f"'{player}' is not registered as a player. Please add the name as a player first.")
@@ -90,8 +94,6 @@ def update_scores(activity_id, player, score):
 
         # Update the score for the players in the specified activity row
         worksheet.update_cell(activity_id + 1, player_column, score)
-
-        
     except ValueError:
         # If player not found, add a new column for the player
         worksheet.add_cols(1)
@@ -99,27 +101,37 @@ def update_scores(activity_id, player, score):
         worksheet.update_cell(1, player_column, player)
         worksheet.update_cell(activity_id + 1, player_column, score)
 
-
 # Function to calculate overall scores
-def calculate_overall_scores():
-    # Get the leaderboard worksheet
+def calculate_totals():
+    activity_worksheet = SHEET.get_worksheet(0)
     leaderboard_worksheet = SHEET.get_worksheet(1)
 
-    # Get all players from the first row (excluding the 'ID' column)
-    players = leaderboard_worksheet.row_values(2)[1:]
+    # Get the list of player names from the first row of the 'activity_score' worksheet
+    players = activity_worksheet.row_values(1)[3:]
 
-    # Get all activities and scores from the activity_scores worksheet
-    activity_scores = SHEET.get_worksheet(0).get_all_values()[1:]
+    # Initialize a dictionary to store total scores for each player
+    total_scores = {player: 0 for player in players}
 
-    # Initialize a dictionary to score total scores for each player
-    overall_scores = {players: 0 for player in players}
+    # Loop through each row in the activity worksheet to calculate total scores
+    for row in activity_worksheet.get_all_values()[1:]:
+        for i, score in enumerate(row[3:], start=3):
+            # Skip non-integer scores
+            try:
+                if i - 3 < len(players):
+                    total_scores[players[i - 3]] += int(score)
+            except ValueError:
+                continue
 
-    # Iterate over each activity and update overall scores for each player
-    for activity in activity_scores:
-        for i, player_scores in enumerate(activity[3:], start=1):
-            overall_scores[players[i-1]] += int(player_score) if player_score else 0
+    # Sort players by their total scores in descending order
+    sorted_players = sorted(total_scores.items(), key=lambda x: x[1], reverse=True)
 
-    return overall_scores
+    # Update the leaderboard worksheet with the sorted players and their total scores
+    leaderboard_worksheet.clear()
+    leaderboard_worksheet.append_row(['Position', 'Name', 'Total score'])
+    for i, (player, total_score) in enumerate(sorted_players, start=1):
+        leaderboard_worksheet.append_row([i, player, total_score])
+
+    print("Total scores calculated and updated to the leaderboard.")
 
 
 # Main function to handle user input
@@ -146,10 +158,7 @@ def main():
             score = int(input("Enter score: "))
             update_scores(activity_id, player, score)
         elif choice == '4':
-            overall_scores = calculate_overall_scores()
-            print("Overall Scores:")
-            for player, score in overall_scores.items():
-                print(f"{player}: {score}")
+            calculate_totals()
         elif choice == '5':
             player = input("Enter player name to delete: ")
             delete_player(player)
@@ -158,7 +167,6 @@ def main():
             break
         else:
             print("Invalid choice, please try again.")
-
 
 if __name__ == "__main__":
     main()
