@@ -15,30 +15,28 @@ SHEET = GSPREAD_CLIENT.open('family_cozy_fridays')
 # Get the data from the sheet as a list of lists
 
 
-# function to add data in the activity_scores worksheet
 def add_activity(date, activity, players):
-    # Get the Activity_scores worksheet
     worksheet = SHEET.get_worksheet(0)
 
-    # Get the last activity ID from the worksheet
     last_activity_id = worksheet.cell(worksheet.row_count, 1).value
-
-    # generate unique ID for the activity
     activity_id = int(last_activity_id) + 1 if last_activity_id else 1
 
-    # Prepare data to append to the worksheet
     row_data = [activity_id, date, activity]
 
-    # Get existing headers from the first row
     existing_headers = worksheet.row_values(1)
 
-    # Append the players names to the existing headers
-    updated_headers = existing_headers + players
+    for player in players:
+        player_lower = player.strip().lower()
+        if player_lower not in map(str.lower, existing_headers):
+            existing_headers.append(player.strip())
 
-    # Write the updated headers back to the first row of the worksheet
-    worksheet.update('A1:Z1', [updated_headers])
+    # Update the headers row with the updated list of players
+    header_range = f'A1:{chr(ord("A") + len(existing_headers) - 1)}1'
+    header_cells = worksheet.range(header_range)
+    for i, header in enumerate(existing_headers):
+        header_cells[i].value = header
+    worksheet.update_cells(header_cells)
 
-    # Append the row to the worksheet
     worksheet.append_row(row_data)
 
 
