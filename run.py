@@ -15,15 +15,8 @@ SHEET = GSPREAD_CLIENT.open('family_cozy_fridays')
 # Get the data from the sheet as a list of lists
 
 
-def add_activity(date, activity, players):
+def add_players(players):
     worksheet = SHEET.get_worksheet(0)
-
-    # Find the last non-empty row in the first column
-    values_list = worksheet.col_values(1)
-    last_activity_id = max([int(val) for val in values_list[1:] if val]) if values_list else 0
-    activity_id = last_activity_id + 1
-
-    row_data = [activity_id, date, activity]
 
     existing_headers = worksheet.row_values(1)
 
@@ -39,7 +32,41 @@ def add_activity(date, activity, players):
         header_cells[i].value = header
     worksheet.update_cells(header_cells)
 
+def add_activity(date, activity):
+    worksheet = SHEET.get_worksheet(0)
+
+    # Find the last non-empty row in the first column
+    values_list = worksheet.col_values(1)
+    if len(values_list) > 1:
+        last_activity_id = max([int(val) for val in values_list[1:] if val])
+    else:
+        last_activity_id = 0
+    activity_id = last_activity_id + 1
+
+    row_data = [activity_id, date, activity]
+
     worksheet.append_row(row_data)
+
+
+def delete_player(player):
+    worksheet = SHEET.get_worksheet(0)
+
+    existing_headers = worksheet.row_values(1)
+
+    player_lower = player.strip().lower()
+    if player_lower in map(str.lower, existing_headers):
+        existing_headers = [header for header in existing_headers if header.strip().lower() != player_lower]
+
+        # Clear the header row
+        worksheet.update(range_name='B1:ZZ1', values=[[''] * len(existing_headers)])
+
+        # Update the headers row with the updated list of players
+        for i, header in enumerate(existing_headers, start=1):
+            worksheet.update_cell(1, i, header)
+
+        print(f"Player '{player}' deleted successfully.")
+    else:
+        print(f"Player '{player}' not found.")
 
 
 # Function to update scores for a specific activity
@@ -98,32 +125,40 @@ def calculate_overall_scores():
 # Main function to handle user input
 def main():
     while True:
-        print("\n1. Add Activity and Players")
-        print("2. Update Scores")
-        print("3. Overall Scores")
-        print("4. Exit")
+        print("\n1. Add Activity")
+        print("2. Add Players")
+        print("3. Update Scores")
+        print("4. Overall Scores")
+        print("5. Delete Player")
+        print("6. Exit")
         choice = input("Enter your choice: ")
 
         if choice == '1':
             date = input("Enter the date: ")
             activity = input("Enter the activity/game: ")
-            players = input("Enter player names (separated by coma): ").split(',')
-            add_activity(date, activity, players)
+            add_activity(date, activity)
         elif choice == '2':
+            players = input("Enter player names (separated by comma): ").split(',')
+            add_players(players)
+        elif choice == '3':
             activity_id = int(input("Enter activity ID: "))
             player = input("Enter player name: ")
             score = int(input("Enter score: "))
             update_scores(activity_id, player, score)
-        elif choice == '3':
-            overall_scores = calculate_overall_scores
+        elif choice == '4':
+            overall_scores = calculate_overall_scores()
             print("Overall Scores:")
             for player, score in overall_scores.items():
                 print(f"{player}: {score}")
-        elif choice == '4':
+        elif choice == '5':
+            player = input("Enter player name to delete: ")
+            delete_player(player)
+        elif choice == '6':
             print("Exiting...")
             break
         else:
             print("Invalid choice, please try again.")
+
 
 if __name__ == "__main__":
     main()
