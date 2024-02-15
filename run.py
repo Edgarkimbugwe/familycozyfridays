@@ -18,8 +18,10 @@ SHEET = GSPREAD_CLIENT.open('family_cozy_fridays')
 def add_activity(date, activity, players):
     worksheet = SHEET.get_worksheet(0)
 
-    last_activity_id = worksheet.cell(worksheet.row_count, 1).value
-    activity_id = int(last_activity_id) + 1 if last_activity_id else 1
+    # Find the last non-empty row in the first column
+    values_list = worksheet.col_values(1)
+    last_activity_id = max([int(val) for val in values_list[1:] if val]) if values_list else 0
+    activity_id = last_activity_id + 1
 
     row_data = [activity_id, date, activity]
 
@@ -61,6 +63,8 @@ def update_scores(activity_id, player, score):
 
         # Update the score for the players in the specified activity row
         worksheet.update_cell(activity_id + 1, player_column, score)
+
+        
     except ValueError:
         # If player not found, add a new column for the player
         worksheet.add_cols(1)
