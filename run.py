@@ -102,11 +102,11 @@ def update_scores(activity_id, player, score):
 
 # Function to calculate overall scores
 def calculate_overall_scores():
-    # Get the overall scores worksheet
-    worksheet = SHEET.get_worksheet(1)
+    # Get the leaderboard worksheet
+    leaderboard_worksheet = SHEET.get_worksheet(1)
 
     # Get all players from the first row (excluding the 'ID' column)
-    players = worksheet.row_values(1)[1:]
+    players = leaderboard_worksheet.row_values(2)[1:]
 
     # Get all activities and scores from the activity_scores worksheet
     activity_scores = SHEET.get_worksheet(0).get_all_values()[1:]
@@ -117,7 +117,7 @@ def calculate_overall_scores():
     # Iterate over each activity and update overall scores for each player
     for activity in activity_scores:
         for i, player_scores in enumerate(activity[3:], start=1):
-            overall_scores[players[i-1]] += int(player_scores) if player_score else 0
+            overall_scores[players[i-1]] += int(player_score) if player_score else 0
 
     return overall_scores
 
@@ -128,7 +128,7 @@ def main():
         print("\n1. Add Activity")
         print("2. Add Players")
         print("3. Update Scores")
-        print("4. Overall Scores")
+        print("4. Leaderboard")
         print("5. Delete Player")
         print("6. Exit")
         choice = input("Enter your choice: ")
