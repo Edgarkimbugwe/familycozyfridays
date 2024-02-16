@@ -143,24 +143,24 @@ def main():
         print("4. Leaderboard")
         print("5. Delete Player")
         print("6. Exit")
-        choice = input("Enter your choice: ")
+        choice = input("Enter your choice: \n")
 
         if choice == '1':
-            date = input("Enter the date: ")
-            activity = input("Enter the activity/game: ")
+            date = input("Enter the date: \n")
+            activity = input("Enter the activity/game: \n")
             add_activity(date, activity)
         elif choice == '2':
-            players = input("Enter player names (separated by comma): ").split(',')
+            players = input("Enter player names (separated by comma): \n").split(',')
             add_players(players)
         elif choice == '3':
-            activity_id = int(input("Enter activity ID: "))
-            player = input("Enter player name: ")
-            score = int(input("Enter score: "))
+            activity_id = int(input("Enter activity ID: \n"))
+            player = input("Enter player name: \n")
+            score = int(input("Enter score: \n"))
             update_scores(activity_id, player, score)
         elif choice == '4':
             calculate_totals()
         elif choice == '5':
-            player = input("Enter player name to delete: ")
+            player = input("Enter player name to delete: \n")
             delete_player(player)
         elif choice == '6':
             print("Exiting...")
