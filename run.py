@@ -177,26 +177,56 @@ def main():
             players = input("Enter player names (separated by comma): \n").split(',')
             add_players(players)
         elif choice == '3':
-             # Display list of activities
+            # Display list of activities
             print()
             print("Select the activity you want to update scores using the ID No.")
             print()
+
             activities = SHEET.get_worksheet(0).get_all_values()[1:]
+            players = SHEET.get_worksheet(0).row_values(1)[3:]
+
+            # Calculate the maximum length of activity name and date
+            max_activity_length = max([len(activity[2]) for activity in activities])
+            max_date_length = max([len(activity[1]) for activity in activities])
+
+            # Print the header
+            print("{:<8} {:<{max_date_length}} {:<{max_activity_length}} ".format("ID No.", "Date", "Activity", max_date_length=max_date_length, max_activity_length=max_activity_length), end="")
+            for player in players:
+                print("{:<12} ".format(player), end="")
+            print()
+
             for idx, activity in enumerate(activities, start=1):
-                print(f"{activity[0]} - {activity[1]} - {activity[2]}")
+                activity_id, date, activity_name = activity[:3]
+                scores = activity[3:]                
+
+                # Print the activity details
+                print("{:<8} {:<{max_date_length}} {:<{max_activity_length}} ".format(activity_id, date, activity_name, max_date_length=max_date_length, max_activity_length=max_activity_length), end="")
+                for score in scores:
+                    print("{:<12} ".format(score), end="")
+                print()          
             
             # get user input for activity ID, Player name and score
             print()
             activity_id = int(input("Enter activity ID: \n"))
-            player = input("Enter player name: \n")
-            score = int(input("Enter score: \n"))
-            update_scores(activity_id, player, score)
+
+            for player in players:
+                while True:
+                    player_score = input(f"Enter score for {player}: ")
+                    try:
+                        score = int(player_score)
+                        update_scores(activity_id, player, score)
+                        break
+                    except ValueError:
+                        print(RED + "Please enter a valid score (integer)." + RESET)
+            print()
+            print(BLUE + "All scores updated for this activity." + RESET)
         elif choice == '4':
             calculate_totals()
         elif choice == '5':
             player = input("Enter player name to delete: \n")
             delete_player(player)
         elif choice == '6':
+            print()
             print("Exiting...")
             break
         else:
