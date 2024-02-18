@@ -16,6 +16,10 @@ SHEET = GSPREAD_CLIENT.open('family_cozy_fridays')
 
 players = []
 
+RED = '\033[91m'
+BLUE = '\033[94m'
+RESET = '\033[0m'
+
 def add_players(players_list):
     worksheet = SHEET.get_worksheet(0)
 
@@ -47,7 +51,11 @@ def add_activity(date, activity):
 
     row_data = [activity_id, date, activity]
 
+    print()
+    print(BLUE + f"Updating '{activity}' to the worksheet..." + RESET)
     worksheet.append_row(row_data)
+    print()
+    print(BLUE + f"'{activity}' added to the worksheet." + RESET)
 
 def delete_player(player):
     activity_worksheet = SHEET.get_worksheet(0)
@@ -69,9 +77,10 @@ def delete_player(player):
         # Update the leaderboard worksheet to remove the player's total score
         calculate_totals()
 
-        print(f"Player '{player}' deleted successfully.")
+        print()
+        print(BLUE + f"Player '{player}' deleted successfully." + RESET)
     else:
-        print(f"Player '{player}' not found.")
+        print(RED + f"Player '{player}' not found." + RESET)
 
 # Function to update scores for a specific activity
 def update_scores(activity_id, player, score):
@@ -85,7 +94,8 @@ def update_scores(activity_id, player, score):
     players_cleaned = [p.strip().lower() for p in players_list]
 
     if player.strip().lower() not in players_cleaned:
-        print(f"'{player}' is not registered as a player. Please add the name as a player first.")
+        print()
+        print(RED + f"'{player}' is not registered as a player." + RESET)
         return
 
     try:
@@ -131,7 +141,10 @@ def calculate_totals():
     for i, (player, total_score) in enumerate(sorted_players, start=1):
         leaderboard_worksheet.append_row([i, player, total_score])
 
-    print("Total scores calculated and updated to the leaderboard.")
+    print()
+    print(BLUE + "Updating total scores and ranking the players" + RESET)
+    print()
+    print(BLUE + "Total scores calculated and updated to the leaderboard." + RESET)
 
 
 # Main function to handle user input
@@ -143,6 +156,7 @@ def main():
         print("4. Leaderboard")
         print("5. Delete Player")
         print("6. Exit")
+        print()
         choice = input("Enter your choice: \n")
 
         if choice == '1':
@@ -166,7 +180,7 @@ def main():
             print("Exiting...")
             break
         else:
-            print("Invalid choice, please try again.")
+            print(RED + "Invalid choice, please try again." + RESET)
 
 if __name__ == "__main__":
     main()
