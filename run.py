@@ -112,7 +112,7 @@ def update_scores(activity_id, player, score):
         worksheet.update_cell(activity_id + 1, player_column, score)
 
 
-# Function to calculate overall scores
+# Function to calculate overall scores and display the leaderboard
 def calculate_totals():
     activity_worksheet = SHEET.get_worksheet(0)
     leaderboard_worksheet = SHEET.get_worksheet(1)
@@ -139,13 +139,22 @@ def calculate_totals():
     # Update the leaderboard worksheet with the sorted players and their total scores
     print()
     print(BLUE + "Updating total scores and ranking the players...." + RESET)
+    print()
     leaderboard_worksheet.clear()
     leaderboard_worksheet.append_row(['Position', 'Name', 'Total score'])
+    
+    # Calculate the maximum length of player names for formatting
+    max_name_length = max([len(player) for player, _ in sorted_players])
+    
     for i, (player, total_score) in enumerate(sorted_players, start=1):
+        # Format the output to align the scores
+        indent = max_name_length - len(player) + 5
+        print(f"{i}. {player}{' '*indent} {total_score}")
+
         leaderboard_worksheet.append_row([i, player, total_score])
 
     print()
-    print(BLUE + "Total scores calculated and updated to the leaderboard worksheet6." + RESET)
+    print(BLUE + "Total scores calculated and updated to the leaderboard worksheet." + RESET)
 
 
 # Main function to handle user input
