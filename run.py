@@ -111,6 +111,7 @@ def update_scores(activity_id, player, score):
         worksheet.update_cell(1, player_column, player)
         worksheet.update_cell(activity_id + 1, player_column, score)
 
+
 # Function to calculate overall scores
 def calculate_totals():
     activity_worksheet = SHEET.get_worksheet(0)
@@ -136,15 +137,15 @@ def calculate_totals():
     sorted_players = sorted(total_scores.items(), key=lambda x: x[1], reverse=True)
 
     # Update the leaderboard worksheet with the sorted players and their total scores
+    print()
+    print(BLUE + "Updating total scores and ranking the players...." + RESET)
     leaderboard_worksheet.clear()
     leaderboard_worksheet.append_row(['Position', 'Name', 'Total score'])
     for i, (player, total_score) in enumerate(sorted_players, start=1):
         leaderboard_worksheet.append_row([i, player, total_score])
 
     print()
-    print(BLUE + "Updating total scores and ranking the players" + RESET)
-    print()
-    print(BLUE + "Total scores calculated and updated to the leaderboard." + RESET)
+    print(BLUE + "Total scores calculated and updated to the leaderboard worksheet6." + RESET)
 
 
 # Main function to handle user input
@@ -167,6 +168,16 @@ def main():
             players = input("Enter player names (separated by comma): \n").split(',')
             add_players(players)
         elif choice == '3':
+             # Display list of activities
+            print()
+            print("Select the activity you want to update scores using the ID No.")
+            print()
+            activities = SHEET.get_worksheet(0).get_all_values()[1:]
+            for idx, activity in enumerate(activities, start=1):
+                print(f"{activity[0]} - {activity[1]} - {activity[2]}")
+            
+            # get user input for activity ID, Player name and score
+            print()
             activity_id = int(input("Enter activity ID: \n"))
             player = input("Enter player name: \n")
             score = int(input("Enter score: \n"))
