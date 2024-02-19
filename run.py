@@ -33,7 +33,7 @@ This App was developed by Edgar Kimbugwe for PP3
 as part of the FULL STACK SOFTWARE DEVELOPMENT DIPLOMA
 at Code Institute.
 
-Find me @:
+Connect with me:
 https://github.com/Edgarkimbugwe
 www.linkedin.com/in/edgar-kimbugwe-b87687296
 """
@@ -294,11 +294,15 @@ def exit_app():
     """
     confirm = input("Are you sure you want to quit? (Y/N): \n").lower()
     if confirm == 'y':
+        print()
+        print()
         print(LIGHT_YELLOW + f"Thank you for using {APP} today!" + RESET)
         print(EXIT_MESSAGE)
         today = datetime.date.today()
         print(today)
         print(LIGHT_YELLOW + "\nCome back again when you are ready to store more scores" + RESET)
+        print()
+        print()
         # Close the database connection and ensure that all data is properly saved before exit.
         sys.exit(0)
     elif confirm == 'n':
