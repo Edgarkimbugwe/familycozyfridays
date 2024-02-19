@@ -1,5 +1,8 @@
 import gspread
+import sys
+import datetime
 from google.oauth2.service_account import Credentials
+
 
 SCOPE = [
     "https://www.googleapis.com/auth/spreadsheets",
@@ -21,6 +24,19 @@ BLUE = '\033[94m'
 RESET = '\033[0m'
 LIGHT_GREEN = '\033[92m'
 LIGHT_CYAN = '\033[96m'
+LIGHT_YELLOW = '\033[93m'
+
+APP = "Family Cozy Fridays"
+
+EXIT_MESSAGE = """
+This App was developed by Edgar Kimbugwe for PP3
+as part of the FULL STACK SOFTWARE DEVELOPMENT DIPLOMA
+at Code Institute.
+
+Find me @:
+https://github.com/Edgarkimbugwe
+www.linkedin.com/in/edgar-kimbugwe-b87687296
+"""
 
 
 def logo():
@@ -181,6 +197,26 @@ def calculate_totals():
     print(BLUE + "Total scores calculated and updated to the leaderboard worksheet." + RESET)
 
 
+def exit_app():
+    """
+    This function displays an exit message to the user.
+    The user is asked to confirm the selected option. 
+    """
+    confirm = input("Are you sure you want to quit? (Y/N): \n").lower()
+    if confirm == 'y':
+        print(LIGHT_YELLOW + f"Thank you for using {APP} today!" + RESET)
+        print(EXIT_MESSAGE)
+        today = datetime.date.today()
+        print(today)
+        print(LIGHT_YELLOW + "\nCome back again when you are ready to store more scores" + RESET)
+        sys.exit(0)
+    elif confirm == 'n':
+        return
+    else:
+        print(RED + "Invalid choice! Please enter 'Y' or 'N'.")
+        exit_app()
+
+
 # Main function to handle user input
 def main():
     logo()
@@ -252,7 +288,7 @@ def main():
             delete_player(player)
         elif choice == '6':
             print()
-            print("Exiting...")
+            exit_app()
             break
         else:
             print(RED + "Invalid choice, please try again." + RESET)
