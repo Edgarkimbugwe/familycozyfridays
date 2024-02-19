@@ -234,11 +234,19 @@ def main():
         choice = input("Enter your choice: \n")
 
         if choice == '1':
-            date = input("Enter the date: \n")
-            activity = input("Enter the activity/game: \n")
+            While True:
+                date = input("Enter the date (DD-MM-YY): \n")
+                if len(date) == 8 and date.count('-') == 2:
+                    day, month, year = date.split('-')
+                    if day.isdigit() and month.isdigit() and year.isdigit():
+                        break
+                print(RED + "Invalid date format. Please enter the date in DD-MM-YY format." + RESET)
+
+            activity = input("Enter the activity/game (max 20 characters): \n")[:20]
             add_activity(date, activity)
         elif choice == '2':
-            players = input("Enter player names (separated by comma): \n").split(',')
+            players = input("Enter player names (separated by comma, max 8 characters each): \n").split(',')
+            players = [name.strip()[:8] for name in players_input.split(',')]
             add_players(players)
         elif choice == '3':
             # Display list of activities
