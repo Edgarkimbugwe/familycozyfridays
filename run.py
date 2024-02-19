@@ -19,6 +19,30 @@ players = []
 RED = '\033[91m'
 BLUE = '\033[94m'
 RESET = '\033[0m'
+LIGHT_GREEN = '\033[92m'
+LIGHT_CYAN = '\033[96m'
+
+
+def logo():
+    """
+    Logo generated from 
+    https://patorjk.com/software/taag/#p=display&h=2&v=0&f=Doom&t=FamilyCozyFridays
+    """
+    print(LIGHT_CYAN + r"""
+    ______              _ _       _____               ______    _     _                 
+    |  ___|            (_) |     /  __ \              |  ___|  (_)   | |                
+    | |_ __ _ _ __ ___  _| |_   _| /  \/ ___ _____   _| |_ _ __ _  __| | __ _ _   _ ___ 
+    |  _/ _` | '_ ` _ \| | | | | | |    / _ \_  / | | |  _| '__| |/ _` |/ _` | | | / __|
+    | || (_| | | | | | | | | |_| | \__/\ (_) / /| |_| | | | |  | | (_| | (_| | |_| \__ \
+    \_| \__,_|_| |_| |_|_|_|\__, |\____/\___/___|\__, \_| |_|  |_|\__,_|\__,_|\__, |___/
+                             __/ |                __/ |                        __/ |
+                            |___/                |___/                        |___/
+    """ + RESET)
+    print(LIGHT_GREEN
+          + f"Welcome to Family Cozy Fridays."
+            f"\nAn app to store all your activities/scores while playing games with family" 
+            f"\nPlease make use of the Menu below." + RESET)
+
 
 def add_players(players_list):
     worksheet = SHEET.get_worksheet(0)
@@ -159,6 +183,7 @@ def calculate_totals():
 
 # Main function to handle user input
 def main():
+    logo()
     while True:
         print("\n1. Add Activity")
         print("2. Add Players")
