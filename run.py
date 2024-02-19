@@ -296,6 +296,7 @@ def main():
                 print(header)
             print()
             player = input("\nEnter player name to delete: \n")
+            print(BLUE + f"Deleting '{player}'......" + RESET)
             delete_player(player.lower(), players)
         elif choice == '6':
             print()
