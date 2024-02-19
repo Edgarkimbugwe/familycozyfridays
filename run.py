@@ -234,13 +234,15 @@ def main():
         choice = input("Enter your choice: \n")
 
         if choice == '1':
-            While True:
+            while True:
                 date = input("Enter the date (DD-MM-YY): \n")
                 if len(date) == 8 and date.count('-') == 2:
                     day, month, year = date.split('-')
                     if day.isdigit() and month.isdigit() and year.isdigit():
-                        break
-                print(RED + "Invalid date format. Please enter the date in DD-MM-YY format." + RESET)
+                        day, month, year = int(day), int(month), int(year)
+                        if 1 <= month <= 12 and 1 <= day <= 31:
+                            break
+                print(RED + "Invalid date format or date out of range. Please enter the date in DD-MM-YY format." + RESET)
 
             activity = input("Enter the activity/game (max 20 characters): \n")[:20]
             add_activity(date, activity)
