@@ -99,30 +99,23 @@ def add_activity(date, activity):
     print()
     print(BLUE + f"'{activity}' added to the worksheet." + RESET)
 
-def delete_player(player):
-    activity_worksheet = SHEET.get_worksheet(0)
-    leaderboard_worksheet = SHEET.get_worksheet(1)
-
-    existing_headers = activity_worksheet.row_values(1)
-
+def delete_player(player, players):
     player_lower = player.strip().lower()
-    if player_lower in map(str.lower, existing_headers):
-        player_column = existing_headers.index(player) + 1
-
+    if player_lower in map(str.lower, players):
+        player_index = [i for i, p in enumerate(players) if p.lower() == player_lower][0]
+        player_column = player_index + 4  # Adjusted for the offset of player names starting from the 4th column
+        activity_worksheet = SHEET.get_worksheet(0)
         # Delete the player's column from the activity worksheet
         activity_worksheet.delete_columns(player_column)
-
         # Remove the player from the players list
-        global players
-        players.remove(player.strip())
-
+        del players[player_index]
         # Update the leaderboard worksheet to remove the player's total score
         calculate_totals()
-
         print()
         print(BLUE + f"Player '{player}' deleted successfully." + RESET)
     else:
         print(RED + f"Player '{player}' not found." + RESET)
+
 
 # Function to update scores for a specific activity
 def update_scores(activity_id, player, score):
@@ -223,6 +216,7 @@ def exit_app():
 # Main function to handle user input
 def main():
     logo()
+    players = SHEET.get_worksheet(0).row_values(1)[3:]
     while True:
         print("\n1. Add Activity")
         print("2. Add Players")
@@ -297,8 +291,12 @@ def main():
         elif choice == '4':
             calculate_totals()
         elif choice == '5':
-            player = input("Enter player name to delete: \n")
-            delete_player(player)
+            print("\nCurrent Players:")
+            for header in players:
+                print(header)
+            print()
+            player = input("\nEnter player name to delete: \n")
+            delete_player(player.lower(), players)
         elif choice == '6':
             print()
             exit_app()
