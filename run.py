@@ -105,6 +105,13 @@ def delete_player(player, players):
         player_index = [i for i, p in enumerate(players) if p.lower() == player_lower][0]
         player_column = player_index + 4  # Adjusted for the offset of player names starting from the 4th column
         activity_worksheet = SHEET.get_worksheet(0)
+
+        # Ask for confirmation before deleting the player
+        confirm = input(RED + f"All score data for '{players[player_index]}' will be lost. Are you sure you want to delete'{players[player_index]}'? (Y/N): \n" + RESET).lower()
+        if confirm != 'y':
+            print("Deletion cancled.")
+            return
+
         # Delete the player's column from the activity worksheet
         activity_worksheet.delete_columns(player_column)
         # Remove the player from the players list
