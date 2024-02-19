@@ -254,9 +254,9 @@ def main():
             max_date_length = max([len(activity[1]) for activity in activities])
 
             # Print the header
-            print("{:<8} {:<{max_date_length}} {:<{max_activity_length}} ".format("ID No.", "Date", "Activity", max_date_length=max_date_length, max_activity_length=max_activity_length), end="")
+            print("{:<3} {:<{max_date_length}} {:<{max_activity_length}} ".format("ID", "Date", "Activity", max_date_length=max_date_length, max_activity_length=max_activity_length), end="")
             for player in players:
-                print("{:<12} ".format(player), end="")
+                print("{:<8} ".format(player), end="")
             print()
 
             for idx, activity in enumerate(activities, start=1):
@@ -264,9 +264,9 @@ def main():
                 scores = activity[3:]                
 
                 # Print the activity details
-                print("{:<8} {:<{max_date_length}} {:<{max_activity_length}} ".format(activity_id, date, activity_name, max_date_length=max_date_length, max_activity_length=max_activity_length), end="")
+                print("{:<3} {:<{max_date_length}} {:<{max_activity_length}} ".format(activity_id, date, activity_name, max_date_length=max_date_length, max_activity_length=max_activity_length), end="")
                 for score in scores:
-                    print("{:<12} ".format(score), end="")
+                    print("{:<8} ".format(score), end="")
                 print()          
             
             # get user input for activity ID, Player name and score
