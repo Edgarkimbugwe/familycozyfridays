@@ -45,7 +45,7 @@ def logo():
     https://patorjk.com/software/taag/#p=display&h=2&v=0&f=Doom&t=FamilyCozyFridays
     """
     print(LIGHT_CYAN + r"""
-    ______              _ _       _____               ______    _     _                 
+     ______              _ _       _____               ______    _     _                 
     |  ___|            (_) |     /  __ \              |  ___|  (_)   | |                
     | |_ __ _ _ __ ___  _| |_   _| /  \/ ___ _____   _| |_ _ __ _  __| | __ _ _   _ ___ 
     |  _/ _` | '_ ` _ \| | | | | | |    / _ \_  / | | |  _| '__| |/ _` |/ _` | | | / __|
@@ -209,6 +209,7 @@ def exit_app():
         today = datetime.date.today()
         print(today)
         print(LIGHT_YELLOW + "\nCome back again when you are ready to store more scores" + RESET)
+        # Close the database connection and ensure that all data is properly saved before exit.
         sys.exit(0)
     elif confirm == 'n':
         return
