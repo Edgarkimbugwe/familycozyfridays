@@ -190,6 +190,89 @@ def calculate_totals():
 
     print()
     print(BLUE + "Total scores calculated and updated to the leaderboard worksheet." + RESET)
+    
+
+def all_activity_scores():
+    activities = SHEET.get_worksheet(0).get_all_values()[1:]
+    players = SHEET.get_worksheet(0).row_values(1)[3:]
+
+    # Calculate the maximum length of activity name and date
+    max_activity_length = max([len(activity[2]) for activity in activities])
+    max_date_length = max([len(activity[1]) for activity in activities])
+
+    # Print the header
+    print("{:<3} {:<{max_date_length}} {:<{max_activity_length}} ".format("ID", "Date", "Activity", max_date_length=max_date_length, max_activity_length=max_activity_length), end="")
+    for player in players:
+        print("{:<8} ".format(player), end="")
+    print()
+
+    for idx, activity in enumerate(activities, start=1):
+        activity_id, date, activity_name = activity[:3]
+        scores = activity[3:]                
+
+        # Print the activity details
+        print("{:<3} {:<{max_date_length}} {:<{max_activity_length}} ".format(activity_id, date, activity_name, max_date_length=max_date_length, max_activity_length=max_activity_length), end="")
+        for score in scores:
+            print("{:<8} ".format(score), end="")
+        print()
+
+
+def edit_or_delete_activity():
+    """
+    Function to edit or delete an activity based on the activity ID.
+    """
+    activities_worksheet = SHEET.get_worksheet(0)
+    activities_data = activities_worksheet.get_all_values()[1:]
+    activities_headers = activities_worksheet.row_values(1)
+
+    # Display the list of activities
+    all_activity_scores()
+
+    # Get the ID of the activity to edit or delete
+    activity_id = input("\nEnter the ID of the activity to edit/delete: ")
+
+    # Find the activity with the specified ID
+    activity_index = None
+    for i, activity in enumerate(activities_data):
+        if activity[0] == activity_id:
+            activity_index = i
+            break
+
+    if activity_index is None:
+        print("Activity not found.")
+        return
+
+    print("\nActivity details:")
+    for i, header in enumerate(activities_headers):
+        print(f"{header}: {activities_data[activity_index][i]}")
+
+    while True:
+        choice = input("\nDo you want to edit or delete this activity? (edit/delete/abort): ")
+        if choice.lower() == "edit":
+            # Edit the activity
+            print("\nEnter the new details for the activity:")
+            new_date = input("Enter the new date (DD-MM-YY): ")
+            new_activity = input("Enter the new activity name (max 20 characters): ")[:20]
+
+            # Update the activity details
+            activities_data[activity_index][1] = new_date
+            activities_data[activity_index][2] = new_activity
+
+            # Update the worksheet
+            activities_worksheet.update([activities_data[activity_index][1:3]], f"B{activity_index + 2}:C{activity_index + 2}")
+
+            print("Activity updated successfully.")
+            break
+        elif choice.lower() == "delete":
+            # Delete the activity
+            activities_worksheet.delete_rows(activity_index + 2)  # Add 2 to account for 0-indexing and header row
+            print("Activity deleted successfully.")
+            break
+        elif choice.lower() == "abort":
+            print("Operation aborted.")
+            break
+        else:
+            print("Invalid choice. Please enter 'edit', 'delete', or 'abort'.")
 
 
 def exit_app():
@@ -221,9 +304,10 @@ def main():
         print("\n1. Add Activity")
         print("2. Add Players")
         print("3. Update Scores")
-        print("4. Leaderboard")
-        print("5. Delete Player")
-        print("6. Exit")
+        print("4. Edit/Delete Activity")
+        print("5. Leaderboard")
+        print("6. Delete Player")
+        print("7. Exit")
         print()
         choice = input("Enter your choice: \n")
 
@@ -247,31 +331,10 @@ def main():
         elif choice == '3':
             # Display list of activities
             print()
-            print("Select the activity you want to update scores using the ID No.")
+            print(LIGHT_YELLOW + "Select the activity you want to update scores using the ID No." + RESET)
             print()
 
-            activities = SHEET.get_worksheet(0).get_all_values()[1:]
-            players = SHEET.get_worksheet(0).row_values(1)[3:]
-
-            # Calculate the maximum length of activity name and date
-            max_activity_length = max([len(activity[2]) for activity in activities])
-            max_date_length = max([len(activity[1]) for activity in activities])
-
-            # Print the header
-            print("{:<3} {:<{max_date_length}} {:<{max_activity_length}} ".format("ID", "Date", "Activity", max_date_length=max_date_length, max_activity_length=max_activity_length), end="")
-            for player in players:
-                print("{:<8} ".format(player), end="")
-            print()
-
-            for idx, activity in enumerate(activities, start=1):
-                activity_id, date, activity_name = activity[:3]
-                scores = activity[3:]                
-
-                # Print the activity details
-                print("{:<3} {:<{max_date_length}} {:<{max_activity_length}} ".format(activity_id, date, activity_name, max_date_length=max_date_length, max_activity_length=max_activity_length), end="")
-                for score in scores:
-                    print("{:<8} ".format(score), end="")
-                print()          
+            all_activity_scores()          
             
             # get user input for activity ID, Player name and score
             print()
@@ -290,9 +353,13 @@ def main():
             print(BLUE + "All scores updated for this activity." + RESET)
         elif choice == '4':
             print()
-            print(BLUE + "Collecting data.....")
-            calculate_totals()
+            edit_or_delete_activity()
+        
         elif choice == '5':
+            print()
+            print(BLUE + "Collecting data....." + RESET)
+            calculate_totals()
+        elif choice == '6':
             print("\nCurrent Players:")
             for header in players:
                 print(header)
@@ -300,7 +367,7 @@ def main():
             print()
             print(BLUE + f"Deleting '{player}'......" + RESET)
             delete_player(player.lower(), players)
-        elif choice == '6':
+        elif choice == '7':
             print()
             exit_app()
             break
