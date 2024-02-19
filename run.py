@@ -289,13 +289,15 @@ def main():
             print()
             print(BLUE + "All scores updated for this activity." + RESET)
         elif choice == '4':
+            print()
+            print(BLUE + "Collecting data.....")
             calculate_totals()
         elif choice == '5':
             print("\nCurrent Players:")
             for header in players:
                 print(header)
-            print()
             player = input("\nEnter player name to delete: \n")
+            print()
             print(BLUE + f"Deleting '{player}'......" + RESET)
             delete_player(player.lower(), players)
         elif choice == '6':
