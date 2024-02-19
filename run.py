@@ -229,7 +229,12 @@ def edit_or_delete_activity():
     all_activity_scores()
 
     # Get the ID of the activity to edit or delete
-    activity_id = input("\nEnter the ID of the activity to edit/delete: ")
+    while True:
+        try:
+            activity_id = int(input("\nEnter the ID of the activity to edit/delete: "))
+            break  # Exit the loop if input is successfully converted to an integer
+        except ValueError:
+            print(RED + "Please enter a valid integer ID." + RESET)
 
     # Find the activity with the specified ID
     activity_index = None
@@ -239,7 +244,7 @@ def edit_or_delete_activity():
             break
 
     if activity_index is None:
-        print("Activity not found.")
+        print(RED + "Activity not found." + RESET)
         return
 
     print("\nActivity details:")
@@ -353,8 +358,9 @@ def main():
             print(BLUE + "All scores updated for this activity." + RESET)
         elif choice == '4':
             print()
-            edit_or_delete_activity()
-        
+            print(BLUE + "Collecting data....." + RESET)
+            print()
+            edit_or_delete_activity()        
         elif choice == '5':
             print()
             print(BLUE + "Collecting data....." + RESET)
