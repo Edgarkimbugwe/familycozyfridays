@@ -93,7 +93,7 @@ def add_players(players_list):
     # Prompt the user to add new player names
     while True:
         new_player = input("\nEnter player name (max 8 characters): \n")
-        new_player = new_player.strip()[:8]
+        new_player = new_player.strip()[:6]
 
         if new_player.lower() in map(str.lower, existing_headers):
             print(RED + "Player name exists, add another name." + RESET)
