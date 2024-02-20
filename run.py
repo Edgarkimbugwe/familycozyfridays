@@ -1,3 +1,4 @@
+import os
 import gspread
 import sys
 import datetime
@@ -37,6 +38,10 @@ Connect with me:
 https://github.com/Edgarkimbugwe
 www.linkedin.com/in/edgar-kimbugwe-b87687296
 """
+
+
+def clear_terminal():
+    os.system("cls" if os.name == "nt" else "clear")
 
 
 def logo():
