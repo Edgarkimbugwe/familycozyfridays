@@ -62,24 +62,6 @@ def logo():
             f"\nPlease make use of the Menu below." + RESET)
 
 
-def add_players(players_list):
-    worksheet = SHEET.get_worksheet(0)
-
-    existing_headers = worksheet.row_values(1)
-
-    for player in players_list:
-        player_lower = player.strip().lower()
-        if player_lower not in map(str.lower, existing_headers):
-            existing_headers.append(player.strip())
-            players.append(player.strip())
-
-    # Update the headers row with the updated list of players
-    header_range = f'A1:{chr(ord("A") + len(existing_headers) - 1)}1'
-    header_cells = worksheet.range(header_range)
-    for i, header in enumerate(existing_headers):
-        header_cells[i].value = header
-    worksheet.update_cells(header_cells)
-
 def add_activity(date, activity):
     worksheet = SHEET.get_worksheet(0)
 
@@ -98,6 +80,47 @@ def add_activity(date, activity):
     worksheet.append_row(row_data)
     print()
     print(BLUE + f"'{activity}' added to the worksheet." + RESET)
+
+
+def add_players(players_list):
+    worksheet = SHEET.get_worksheet(0)
+
+    existing_headers = worksheet.row_values(1)
+
+    # Display existing player names
+    print("\nAlready existing player names:", ", ".join(existing_headers[3:]))
+
+    # Prompt the user to add new player names
+    while True:
+        new_player = input("\nEnter player name (max 8 characters): \n")
+        new_player = new_player.strip()[:8]
+
+        if new_player.lower() in map(str.lower, existing_headers):
+            print(RED + "Player name exists, add another name." + RESET)
+        else:
+            existing_headers.append(new_player)
+            players_list.append(new_player)
+            print(BLUE + f"Player '{new_player}' added successfully." + RESET)
+
+        add_another = input("\nDo you want to add another player? (Y/N): \n")
+        if add_another.lower() != 'y':
+            break
+
+    # Update the headers row with the updated list of players
+    header_range = f'A1:{chr(ord("A") + len(existing_headers) - 1)}1'
+    header_cells = worksheet.range(header_range)
+    for i, header in enumerate(existing_headers):
+        header_cells[i].value = header
+    worksheet.update_cells(header_cells)
+
+
+    # Update the headers row with the updated list of players
+    header_range = f'A1:{chr(ord("A") + len(existing_headers) - 1)}1'
+    header_cells = worksheet.range(header_range)
+    for i, header in enumerate(existing_headers):
+        header_cells[i].value = header
+    worksheet.update_cells(header_cells)
+
 
 def delete_player(player, players):
     player_lower = player.strip().lower()
@@ -341,8 +364,6 @@ def main():
             activity = input("Enter the activity/game (max 20 characters): \n")[:20]
             add_activity(date, activity)
         elif choice == '2':
-            players = input("Enter player names (separated by comma, max 8 characters each): \n").split(',')
-            players = [name.strip()[:8] for name in players_input.split(',')]
             add_players(players)
         elif choice == '3':
             # Display list of activities
