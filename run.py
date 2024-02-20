@@ -88,11 +88,16 @@ def add_players(players_list):
     existing_headers = worksheet.row_values(1)
 
     # Display existing player names
-    print("\nAlready existing player names:", ", ".join(existing_headers[3:]))
+    print(BLUE + "\nAlready existing player names:" + RESET, ", ".join(existing_headers[3:]))
+
+    # Check if the number of existing players is already 6
+    if len(existing_headers[3:]) >= 6:
+        print(RED + "You cannot add more than 6 players." + RESET)
+        return
 
     # Prompt the user to add new player names
     while True:
-        new_player = input("\nEnter player name (max 6 characters): \n")
+        new_player = input("\nEnter player name (max 5 characters): \n")
         new_player = new_player.strip()[:6]
 
         if new_player.lower() in map(str.lower, existing_headers):
@@ -102,17 +107,13 @@ def add_players(players_list):
             players_list.append(new_player)
             print(BLUE + f"Player '{new_player}' added successfully." + RESET)
 
+        if len(existing_headers[3:]) >= 6:
+            print(RED + "You have reached the maximum number of players (6)." + RESET)
+            break
+
         add_another = input("\nDo you want to add another player? (Y/N): \n")
         if add_another.lower() != 'y':
             break
-
-    # Update the headers row with the updated list of players
-    header_range = f'A1:{chr(ord("A") + len(existing_headers) - 1)}1'
-    header_cells = worksheet.range(header_range)
-    for i, header in enumerate(existing_headers):
-        header_cells[i].value = header
-    worksheet.update_cells(header_cells)
-
 
     # Update the headers row with the updated list of players
     header_range = f'A1:{chr(ord("A") + len(existing_headers) - 1)}1'
@@ -233,7 +234,7 @@ def all_activity_scores():
     # Print the header
     print("{:<3} {:<{max_date_length}} {:<{max_activity_length}} ".format("ID", "Date", "Activity", max_date_length=max_date_length, max_activity_length=max_activity_length), end="")
     for player in players:
-        print("{:<6} ".format(player), end="")
+        print("{:<5} ".format(player), end="")
     print()
 
     for idx, activity in enumerate(activities, start=1):
@@ -243,7 +244,7 @@ def all_activity_scores():
         # Print the activity details
         print("{:<3} {:<{max_date_length}} {:<{max_activity_length}} ".format(activity_id, date, activity_name, max_date_length=max_date_length, max_activity_length=max_activity_length), end="")
         for score in scores:
-            print("{:<6} ".format(score), end="")
+            print("{:<5} ".format(score), end="")
         print()
 
 
