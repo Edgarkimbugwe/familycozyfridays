@@ -92,7 +92,7 @@ def add_players(players_list):
 
     # Prompt the user to add new player names
     while True:
-        new_player = input("\nEnter player name (max 8 characters): \n")
+        new_player = input("\nEnter player name (max 6 characters): \n")
         new_player = new_player.strip()[:6]
 
         if new_player.lower() in map(str.lower, existing_headers):
@@ -233,7 +233,7 @@ def all_activity_scores():
     # Print the header
     print("{:<3} {:<{max_date_length}} {:<{max_activity_length}} ".format("ID", "Date", "Activity", max_date_length=max_date_length, max_activity_length=max_activity_length), end="")
     for player in players:
-        print("{:<8} ".format(player), end="")
+        print("{:<6} ".format(player), end="")
     print()
 
     for idx, activity in enumerate(activities, start=1):
@@ -243,7 +243,7 @@ def all_activity_scores():
         # Print the activity details
         print("{:<3} {:<{max_date_length}} {:<{max_activity_length}} ".format(activity_id, date, activity_name, max_date_length=max_date_length, max_activity_length=max_activity_length), end="")
         for score in scores:
-            print("{:<8} ".format(score), end="")
+            print("{:<6} ".format(score), end="")
         print()
 
 
