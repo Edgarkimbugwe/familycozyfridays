@@ -2,10 +2,6 @@ import gspread
 import sys
 import datetime
 from google.oauth2.service_account import Credentials
-from asciimatics.widgets import Frame, ListBox, Layout, Divider, Text, Button, TextBox, Widget
-from asciimatics.scene import Scene
-from asciimatics.screen import Screen
-from asciimatics.effects import Print
 
 
 SCOPE = [
@@ -224,7 +220,7 @@ def calculate_totals():
 
     print()
     print(BLUE + "Total scores calculated and updated to the leaderboard worksheet." + RESET)
-
+    
 
 def all_activity_scores():
     activities = SHEET.get_worksheet(0).get_all_values()[1:]
@@ -234,42 +230,24 @@ def all_activity_scores():
     max_activity_length = max([len(activity[2]) for activity in activities])
     max_date_length = max([len(activity[1]) for activity in activities])
 
-    # Create a list of strings representing each activity
-    lines = []
-    lines.append("{:<3} {:<{max_date_length}} {:<{max_activity_length}} ".format("ID", "Date", "Activity", max_date_length=max_date_length, max_activity_length=max_activity_length) + " ".join(["{:<8}".format(player) for player in players]))
+    # Print the header
+    print("{:<3} {:<{max_date_length}} {:<{max_activity_length}} ".format("ID", "Date", "Activity", max_date_length=max_date_length, max_activity_length=max_activity_length), end="")
+    for player in players:
+        print("{:<6} ".format(player), end="")
+    print()
 
     for idx, activity in enumerate(activities, start=1):
         activity_id, date, activity_name = activity[:3]
-        scores = activity[3:]
-        line = "{:<3} {:<{max_date_length}} {:<{max_activity_length}} ".format(activity_id, date, activity_name, max_date_length=max_date_length, max_activity_length=max_activity_length) + " ".join(["{:<8}".format(score) for score in scores])
-        lines.append(line)
+        scores = activity[3:]                
 
-    # Create a scrollable frame
-    class MyFrame(Frame):
-        def __init__(self, screen):
-            super(MyFrame, self).__init__(screen,
-                                           screen.height,
-                                           screen.width,
-                                           has_border=False,
-                                           title="Activity Scores")
-            layout = Layout([1], fill_frame=True)
-            self.add_layout(layout)
-            self._list = ListBox(screen.height - 2, Widget.FILL_FRAME, lines, name="activities")
-            layout.add_widget(self._list)
-
-    def demo(screen, scene):
-        scenes = [
-            Scene([MyFrame(screen)], -1, name="Main"),
-        ]
-        screen.play(scenes, stop_on_resize=True)
-
-    Screen.wrapper(demo, catch_interrupt=True)
+        # Print the activity details
+        print("{:<3} {:<{max_date_length}} {:<{max_activity_length}} ".format(activity_id, date, activity_name, max_date_length=max_date_length, max_activity_length=max_activity_length), end="")
+        for score in scores:
+            print("{:<6} ".format(score), end="")
+        print()
 
 
 def edit_or_delete_activity():
-    """
-    Function to edit or delete an activity based on the activity ID.
-    """
     activities_worksheet = SHEET.get_worksheet(0)
     activities_data = activities_worksheet.get_all_values()[1:]
     activities_headers = activities_worksheet.row_values(1)
@@ -281,6 +259,8 @@ def edit_or_delete_activity():
     while True:
         try:
             activity_id = int(input("\nEnter the ID of the activity to edit/delete: "))
+            if not 1 <= activity_id <= len(activities_data):
+                raise ValueError("Invalid ID")
             break  # Exit the loop if input is successfully converted to an integer
         except ValueError:
             print(RED + "Please enter a valid integer ID." + RESET)
@@ -288,7 +268,7 @@ def edit_or_delete_activity():
     # Find the activity with the specified ID
     activity_index = None
     for i, activity in enumerate(activities_data):
-        if activity[0] == activity_id:
+        if int(activity[0]) == activity_id:
             activity_index = i
             break
 
@@ -301,12 +281,12 @@ def edit_or_delete_activity():
         print(f"{header}: {activities_data[activity_index][i]}")
 
     while True:
-        choice = input("\nDo you want to edit or delete this activity? (edit/delete/abort): ")
+        choice = input(LIGHT_CYAN + "\nDo you want to edit or delete this activity? (edit/delete/abort): " + RESET)
         if choice.lower() == "edit":
             # Edit the activity
             print("\nEnter the new details for the activity:")
-            new_date = input("Enter the new date (DD-MM-YY): ")
-            new_activity = input("Enter the new activity name (max 20 characters): ")[:20]
+            new_date = input("Enter the new date (DD-MM-YY): \n")
+            new_activity = input("Enter the new activity name (max 20 characters): \n")[:20]
 
             # Update the activity details
             activities_data[activity_index][1] = new_date
@@ -315,18 +295,18 @@ def edit_or_delete_activity():
             # Update the worksheet
             activities_worksheet.update([activities_data[activity_index][1:3]], f"B{activity_index + 2}:C{activity_index + 2}")
 
-            print("Activity updated successfully.")
+            print(BLUE + "Activity updated successfully." + RESET)
             break
         elif choice.lower() == "delete":
             # Delete the activity
             activities_worksheet.delete_rows(activity_index + 2)  # Add 2 to account for 0-indexing and header row
-            print("Activity deleted successfully.")
+            print(BLUE + "Activity deleted successfully." + RESET)
             break
         elif choice.lower() == "abort":
-            print("Operation aborted.")
+            print(BLUE + "Operation aborted." + RESET)
             break
         else:
-            print("Invalid choice. Please enter 'edit', 'delete', or 'abort'.")
+            print(RED + "Invalid choice. Please enter 'edit', 'delete', or 'abort'." + RESET)
 
 
 def exit_app():
