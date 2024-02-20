@@ -386,6 +386,8 @@ def main():
         print(" " * 5 + "7. Exit")
         print()
         choice = input(LIGHT_GREEN + "Enter your choice: \n" + RESET)
+        
+        clear_terminal()
 
         if choice == '1':
             while True:
