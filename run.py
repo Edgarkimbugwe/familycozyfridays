@@ -98,7 +98,7 @@ def add_players(players_list):
     # Prompt the user to add new player names
     while True:
         new_player = input("\nEnter player name (max 5 characters): \n")
-        new_player = new_player.strip()[:6]
+        new_player = new_player.strip()[:5]
 
         if new_player.lower() in map(str.lower, existing_headers):
             print(RED + "Player name exists, add another name." + RESET)
@@ -248,66 +248,98 @@ def all_activity_scores():
         print()
 
 
+def update_activity_ids():
+    worksheet = SHEET.get_worksheet(0)
+    activities_data = worksheet.get_all_values()[1:]
+    for i, activity in enumerate(activities_data, start=1):
+        current_id = int(activity[0])
+        if current_id != i:
+            # Update the ID if it doesn't match the current index
+            worksheet.update_cell(i + 1, 1, i)
+
+
 def edit_or_delete_activity():
     activities_worksheet = SHEET.get_worksheet(0)
     activities_data = activities_worksheet.get_all_values()[1:]
     activities_headers = activities_worksheet.row_values(1)
 
-    # Display the list of activities
-    all_activity_scores()
-
-    # Get the ID of the activity to edit or delete
     while True:
-        try:
-            activity_id = int(input("\nEnter the ID of the activity to edit/delete: "))
-            if not 1 <= activity_id <= len(activities_data):
-                raise ValueError("Invalid ID")
-            break  # Exit the loop if input is successfully converted to an integer
-        except ValueError:
-            print(RED + "Please enter a valid integer ID." + RESET)
+        # Display the list of activities
+        all_activity_scores()
 
-    # Find the activity with the specified ID
-    activity_index = None
-    for i, activity in enumerate(activities_data):
-        if int(activity[0]) == activity_id:
-            activity_index = i
-            break
+        # Get the ID of the activity to edit or delete
+        while True:
+            try:
+                activity_id = int(input(LIGHT_CYAN + "\nEnter the ID of the activity to edit/delete: " + RESET))
+                if not 1 <= activity_id <= len(activities_data):
+                    raise ValueError("Invalid ID")
+                break  # Exit the loop if input is successfully converted to an integer
+            except ValueError:
+                print(RED + "Please enter a valid integer ID." + RESET)
 
-    if activity_index is None:
-        print(RED + "Activity not found." + RESET)
-        return
+        # Find the activity with the specified ID
+        activity_index = None
+        for i, activity in enumerate(activities_data):
+            if int(activity[0]) == activity_id:
+                activity_index = i
+                break
 
-    print("\nActivity details:")
-    for i, header in enumerate(activities_headers):
-        print(f"{header}: {activities_data[activity_index][i]}")
+        if activity_index is None:
+            print(RED + "Activity not found." + RESET)
+            return
 
-    while True:
-        choice = input(LIGHT_CYAN + "\nDo you want to edit or delete this activity? (edit/delete/abort): " + RESET)
-        if choice.lower() == "edit":
-            # Edit the activity
-            print("\nEnter the new details for the activity:")
-            new_date = input("Enter the new date (DD-MM-YY): \n")
-            new_activity = input("Enter the new activity name (max 20 characters): \n")[:20]
+        print("\nActivity details:")
+        for i, header in enumerate(activities_headers):
+            print(f"{header}: {activities_data[activity_index][i]}")
 
-            # Update the activity details
-            activities_data[activity_index][1] = new_date
-            activities_data[activity_index][2] = new_activity
+        while True:
+            choice = input(LIGHT_CYAN + "\nDo you want to edit or delete this activity? (edit/delete/abort): " + RESET)
+            if choice.lower() == "edit":
+                # Edit the activity
+                print("\nEnter the new details for the activity:")
+                new_date = input(LIGHT_CYAN + "Enter the new date (DD-MM-YY): \n" + RESET)
+                new_activity = input(LIGHT_CYAN + "Enter the new activity name (max 20 characters): \n" + RESET)[:20]
 
-            # Update the worksheet
-            activities_worksheet.update([activities_data[activity_index][1:3]], f"B{activity_index + 2}:C{activity_index + 2}")
+                # Confirm the changes
+                confirm_changes = input("\nAre you sure you want to make these changes? (Y/N): ").lower()
+                if confirm_changes == 'y':
+                    # Update the activity details
+                    activities_data[activity_index][1] = new_date
+                    activities_data[activity_index][2] = new_activity
 
-            print(BLUE + "Activity updated successfully." + RESET)
-            break
-        elif choice.lower() == "delete":
-            # Delete the activity
-            activities_worksheet.delete_rows(activity_index + 2)  # Add 2 to account for 0-indexing and header row
-            print(BLUE + "Activity deleted successfully." + RESET)
-            break
-        elif choice.lower() == "abort":
-            print(BLUE + "Operation aborted." + RESET)
-            break
-        else:
-            print(RED + "Invalid choice. Please enter 'edit', 'delete', or 'abort'." + RESET)
+                    # Update the worksheet
+                    activities_worksheet.update([activities_data[activity_index][1:3]], f"B{activity_index + 2}:C{activity_index + 2}")
+
+                    print(BLUE + "Activity updated successfully." + RESET)
+                else:
+                    print(BLUE + "Changes canceled." + RESET)
+                break
+            elif choice.lower() == "delete":
+                # Warn the user before deletion
+                confirm_delete = input(RED + "Warning: This action cannot be undone. Are you sure you want to delete this activity? (Y/N): " + RESET).lower()
+                if confirm_delete == 'y':
+                    # Delete the activity
+                    activities_worksheet.delete_rows(activity_index + 2)  # Add 2 to account for 0-indexing and header row
+                    update_activity_ids()
+                    print(BLUE + "Activity deleted successfully." + RESET)
+                else:
+                    print(BLUE + "Deletion canceled." + RESET)
+                break
+            elif choice.lower() == "abort":
+                print(BLUE + "Operation aborted." + RESET)
+                break
+            else:
+                print(RED + "Invalid choice. Please enter 'edit', 'delete', or 'abort'." + RESET)
+
+        # Ask if the user wants to edit/delete another activity or return to the main menu
+        while True:
+            another = input(LIGHT_CYAN + "\nDo you want to edit/delete another activity? (Y/N): " + RESET).lower()
+            if another == 'y':
+                break
+            elif another == 'n':
+                return
+            else:
+                print(RED + "Invalid choice. Please enter 'Y' or 'N'." + RESET)
 
 
 def exit_app():
