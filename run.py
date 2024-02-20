@@ -2,6 +2,10 @@ import gspread
 import sys
 import datetime
 from google.oauth2.service_account import Credentials
+from asciimatics.widgets import Frame, ListBox, Layout, Divider, Text, Button, TextBox, Widget
+from asciimatics.scene import Scene
+from asciimatics.screen import Screen
+from asciimatics.effects import Print
 
 
 SCOPE = [
@@ -220,7 +224,7 @@ def calculate_totals():
 
     print()
     print(BLUE + "Total scores calculated and updated to the leaderboard worksheet." + RESET)
-    
+
 
 def all_activity_scores():
     activities = SHEET.get_worksheet(0).get_all_values()[1:]
@@ -230,21 +234,36 @@ def all_activity_scores():
     max_activity_length = max([len(activity[2]) for activity in activities])
     max_date_length = max([len(activity[1]) for activity in activities])
 
-    # Print the header
-    print("{:<3} {:<{max_date_length}} {:<{max_activity_length}} ".format("ID", "Date", "Activity", max_date_length=max_date_length, max_activity_length=max_activity_length), end="")
-    for player in players:
-        print("{:<6} ".format(player), end="")
-    print()
+    # Create a list of strings representing each activity
+    lines = []
+    lines.append("{:<3} {:<{max_date_length}} {:<{max_activity_length}} ".format("ID", "Date", "Activity", max_date_length=max_date_length, max_activity_length=max_activity_length) + " ".join(["{:<8}".format(player) for player in players]))
 
     for idx, activity in enumerate(activities, start=1):
         activity_id, date, activity_name = activity[:3]
-        scores = activity[3:]                
+        scores = activity[3:]
+        line = "{:<3} {:<{max_date_length}} {:<{max_activity_length}} ".format(activity_id, date, activity_name, max_date_length=max_date_length, max_activity_length=max_activity_length) + " ".join(["{:<8}".format(score) for score in scores])
+        lines.append(line)
 
-        # Print the activity details
-        print("{:<3} {:<{max_date_length}} {:<{max_activity_length}} ".format(activity_id, date, activity_name, max_date_length=max_date_length, max_activity_length=max_activity_length), end="")
-        for score in scores:
-            print("{:<6} ".format(score), end="")
-        print()
+    # Create a scrollable frame
+    class MyFrame(Frame):
+        def __init__(self, screen):
+            super(MyFrame, self).__init__(screen,
+                                           screen.height,
+                                           screen.width,
+                                           has_border=False,
+                                           title="Activity Scores")
+            layout = Layout([1], fill_frame=True)
+            self.add_layout(layout)
+            self._list = ListBox(screen.height - 2, Widget.FILL_FRAME, lines, name="activities")
+            layout.add_widget(self._list)
+
+    def demo(screen, scene):
+        scenes = [
+            Scene([MyFrame(screen)], -1, name="Main"),
+        ]
+        screen.play(scenes, stop_on_resize=True)
+
+    Screen.wrapper(demo, catch_interrupt=True)
 
 
 def edit_or_delete_activity():
