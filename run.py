@@ -372,15 +372,15 @@ def main():
     logo()
     players = SHEET.get_worksheet(0).row_values(1)[3:]
     while True:
-        print("\n1. Add Activity")
-        print("2. Add Player/s")
-        print("3. Update Scores")
-        print("4. Leaderboard")
-        print("5. Edit/Delete Activity")
-        print("6. Delete Player")
-        print("7. Exit")
+        print("\n" + " " * 5 + "1. Add Activity")
+        print(" " * 5 + "2. Add Player/s")
+        print(" " * 5 + "3. Update Scores")
+        print(" " * 5 + "4. Leaderboard")
+        print(" " * 5 + "5. Edit/Delete Activity")
+        print(" " * 5 + "6. Delete Player")
+        print(" " * 5 + "7. Exit")
         print()
-        choice = input("Enter your choice: \n")
+        choice = input(LIGHT_GREEN + "Enter your choice: \n" + RESET)
 
         if choice == '1':
             while True:
