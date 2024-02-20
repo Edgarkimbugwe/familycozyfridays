@@ -318,10 +318,10 @@ def main():
     players = SHEET.get_worksheet(0).row_values(1)[3:]
     while True:
         print("\n1. Add Activity")
-        print("2. Add Players")
+        print("2. Add Player/s")
         print("3. Update Scores")
-        print("4. Edit/Delete Activity")
-        print("5. Leaderboard")
+        print("4. Leaderboard")
+        print("5. Edit/Delete Activity")
         print("6. Delete Player")
         print("7. Exit")
         print()
@@ -370,12 +370,12 @@ def main():
         elif choice == '4':
             print()
             print(BLUE + "Collecting data....." + RESET)
-            print()
-            edit_or_delete_activity()        
+            calculate_totals()
         elif choice == '5':
             print()
             print(BLUE + "Collecting data....." + RESET)
-            calculate_totals()
+            print()
+            edit_or_delete_activity()
         elif choice == '6':
             print("\nCurrent Players:")
             for header in players:
