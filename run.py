@@ -104,7 +104,7 @@ def add_players(players_list):
 
     # Prompt the user to add new player names
     while True:
-        new_player = input("\nEnter player name (max 5 characters): \n")
+        new_player = input(LIGHT_CYAN + "\nEnter player name (max 5 characters): \n" + RESET)
         new_player = new_player.strip()[:5]
 
         if new_player.lower() in map(str.lower, existing_headers):
@@ -118,7 +118,7 @@ def add_players(players_list):
             print(RED + "You have reached the maximum number of players (6)." + RESET)
             break
 
-        add_another = input("\nDo you want to add another player? (Y/N): \n")
+        add_another = input(LIGHT_CYAN + "\nDo you want to add another player? (Y/N): \n" + RESET)
         if add_another.lower() != 'y':
             break
 
@@ -141,7 +141,7 @@ def delete_player(player, players):
         # Ask for confirmation before deleting the player
         confirm = input(RED + f"All score data for '{players[player_index]}' will be lost. Are you sure you want to delete'{players[player_index]}'? (Y/N): \n" + RESET).lower()
         if confirm != 'y':
-            print("Deletion canceled.")
+            print(BLUE + "Deletion canceled." + RESET)
             return
 
         # Delete the player's column from the activity worksheet
@@ -154,7 +154,7 @@ def delete_player(player, players):
         print(BLUE + f"Player '{player}' deleted successfully." + RESET)
     else:
         print(RED + f"Player '{player}' not found. Enter a name from the list above" + RESET)
-        delete_player(input(LIGHT_GREEN + "\nEnter player name to delete: \n" + RESET), players)
+        delete_player(input(LIGHT_CYAN + "\nEnter player name to delete: \n" + RESET), players)
 
 
 # Function to update scores for a specific activity
@@ -320,7 +320,7 @@ def edit_or_delete_activity():
                 new_activity = input(LIGHT_CYAN + "Enter the new activity name (max 20 characters): \n" + RESET)[:20]
 
                 # Confirm the changes
-                confirm_changes = input("\nAre you sure you want to make these changes? (Y/N): ").lower()
+                confirm_changes = input(LIGHT_CYAN + "\nAre you sure you want to make these changes? (Y/N): " + RESET).lower()
                 if confirm_changes == 'y':
                     # Update the activity details
                     activities_data[activity_index][1] = new_date
@@ -366,7 +366,7 @@ def exit_app():
     This function displays an exit message to the user.
     The user is asked to confirm the selected option. 
     """
-    confirm = input("Are you sure you want to quit? (Y/N): \n").lower()
+    confirm = input(LIGHT_CYAN + "Are you sure you want to quit? (Y/N): \n" + RESET).lower()
     if confirm == 'y':
         print()
         print()
@@ -422,7 +422,7 @@ def main():
         elif choice == '3':
             # Display list of activities
             print()
-            print(LIGHT_YELLOW + "Select the activity you want to update scores using the ID No." + RESET)
+            print(LIGHT_CYAN + "Select the activity you want to update scores using the ID No." + RESET)
             print()
 
             all_activity_scores()          
@@ -430,7 +430,7 @@ def main():
             # get user input for activity ID, Player name and score
             while True:
                 try:
-                    activity_id = int(input(LIGHT_GREEN + "Enter activity ID: \n" + RESET))
+                    activity_id = int(input(LIGHT_CYAN + "Enter activity ID: \n" + RESET))
                     if activity_id < 1 or activity_id > len(activities_data):
                         raise ValueError("Invalid ID")
                     break
@@ -439,7 +439,7 @@ def main():
 
             for player in players:
                 while True:
-                    player_score = input(LIGHT_GREEN + f"Enter score for {player}: " + RESET)
+                    player_score = input(LIGHT_CYAN + f"Enter score for {player}: " + RESET)
                     try:
                         score = int(player_score)
                         update_scores(activity_id, player, score)
@@ -461,7 +461,7 @@ def main():
             print("\nCurrent Players:")
             for header in players:
                 print(header)
-            player = input("\nEnter player name to delete: \n")
+            player = input(LIGHT_CYAN + "\nEnter player name to delete: \n" + RESET)
             print()
             print(BLUE + f"Deleting '{player}'......" + RESET)
             delete_player(player.lower(), players)
