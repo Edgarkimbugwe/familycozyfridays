@@ -425,6 +425,7 @@ def main():
             add_players(players)
         elif choice == '3':
             # Display list of activities
+            clear_terminal()
             print()
             print(LIGHT_CYAN + "Select the activity you want to update scores using the ID No." + RESET)
             print()
