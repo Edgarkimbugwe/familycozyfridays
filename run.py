@@ -234,6 +234,7 @@ def calculate_totals():
     
 
 def all_activity_scores():
+    clear_terminal()
     activities = SHEET.get_worksheet(0).get_all_values()[1:]
     players = SHEET.get_worksheet(0).row_values(1)[3:]
 
