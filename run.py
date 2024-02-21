@@ -49,6 +49,7 @@ def logo():
     Logo generated from 
     https://patorjk.com/software/taag/#p=display&h=2&v=0&f=Doom&t=FamilyCozyFridays
     """
+    clear_terminal()
     print(LIGHT_CYAN + r"""
 
      _____                   ______      _      _                    
@@ -392,6 +393,7 @@ def exit_app():
 
 # Main function to handle user input
 def main():
+    clear_terminal()
     logo()
     players = SHEET.get_worksheet(0).row_values(1)[3:]
     activities_data = SHEET.get_worksheet(0).get_all_values()[1:]
@@ -405,8 +407,6 @@ def main():
         print(" " * 5 + "7. Exit")
         print()
         choice = input(LIGHT_GREEN + "Enter your choice: \n" + RESET)
-        
-        clear_terminal()
 
         if choice == '1':
             while True:
