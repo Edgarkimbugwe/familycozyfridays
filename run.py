@@ -346,6 +346,8 @@ def edit_or_delete_activity():
                     activities_worksheet.delete_rows(activity_index + 2)  # Add 2 to account for 0-indexing and header row
                     update_activity_ids()
                     print(BLUE + "Activity deleted successfully." + RESET)
+                    # Update the display after deletion
+                    all_activity_scores()
                 else:
                     print(BLUE + "Deletion canceled." + RESET)
                 break
