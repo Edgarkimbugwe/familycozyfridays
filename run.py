@@ -68,6 +68,7 @@ def logo():
 
 
 def add_activity(date, activity):
+    clear_terminal()
     worksheet = SHEET.get_worksheet(0)
 
     # Find the last non-empty row in the first column
@@ -88,6 +89,7 @@ def add_activity(date, activity):
 
 
 def add_players(players_list):
+    clear_terminal()
     worksheet = SHEET.get_worksheet(0)
 
     existing_headers = worksheet.row_values(1)
@@ -129,6 +131,7 @@ def add_players(players_list):
 
 
 def delete_player(player, players):
+    clear_terminal()
     player_lower = player.strip().lower()
     if player_lower in map(str.lower, players):
         player_index = [i for i, p in enumerate(players) if p.lower() == player_lower][0]
@@ -156,6 +159,7 @@ def delete_player(player, players):
 
 # Function to update scores for a specific activity
 def update_scores(activity_id, player, score):
+    clear_terminal()
     # Get the Activity_scores worksheet
     worksheet = SHEET.get_worksheet(0)
 
