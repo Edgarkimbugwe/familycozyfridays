@@ -138,7 +138,7 @@ def delete_player(player, players):
         # Ask for confirmation before deleting the player
         confirm = input(RED + f"All score data for '{players[player_index]}' will be lost. Are you sure you want to delete'{players[player_index]}'? (Y/N): \n" + RESET).lower()
         if confirm != 'y':
-            print("Deletion cancled.")
+            print("Deletion canceled.")
             return
 
         # Delete the player's column from the activity worksheet
@@ -150,7 +150,8 @@ def delete_player(player, players):
         print()
         print(BLUE + f"Player '{player}' deleted successfully." + RESET)
     else:
-        print(RED + f"Player '{player}' not found." + RESET)
+        print(RED + f"Player '{player}' not found. Enter a name from the list above" + RESET)
+        delete_player(input(LIGHT_GREEN + "\nEnter player name to delete: \n" + RESET), players)
 
 
 # Function to update scores for a specific activity
@@ -302,7 +303,16 @@ def edit_or_delete_activity():
             if choice.lower() == "edit":
                 # Edit the activity
                 print("\nEnter the new details for the activity:")
-                new_date = input(LIGHT_CYAN + "Enter the new date (DD-MM-YY): \n" + RESET)
+                while True:
+                    new_date = input(LIGHT_CYAN + "Enter the new date (DD-MM-YY): \n" + RESET)
+                    if len(new_date) == 8 and new_date.count('-') == 2:
+                        day, month, year = new_date.split('-')
+                        if day.isdigit() and month.isdigit() and year.isdigit():
+                            day, month, year = int(day), int(month), int(year)
+                            if 1 <= month <= 12 and 1 <= day <= 31:
+                                break
+                    print(RED + "Invalid date format or date out of range. Please enter the date in DD-MM-YY format." + RESET)
+
                 new_activity = input(LIGHT_CYAN + "Enter the new activity name (max 20 characters): \n" + RESET)[:20]
 
                 # Confirm the changes
@@ -366,7 +376,7 @@ def exit_app():
         # Close the database connection and ensure that all data is properly saved before exit.
         sys.exit(0)
     elif confirm == 'n':
-        return
+        main()  # Redirect the user to the main menu
     else:
         print(RED + "Invalid choice! Please enter 'Y' or 'N'.")
         exit_app()
@@ -376,6 +386,7 @@ def exit_app():
 def main():
     logo()
     players = SHEET.get_worksheet(0).row_values(1)[3:]
+    activities_data = SHEET.get_worksheet(0).get_all_values()[1:]
     while True:
         print("\n" + " " * 5 + "1. Add Activity")
         print(" " * 5 + "2. Add Player/s")
@@ -391,7 +402,7 @@ def main():
 
         if choice == '1':
             while True:
-                date = input("Enter the date (DD-MM-YY): \n")
+                date = input(LIGHT_CYAN + "Enter the date (DD-MM-YY): \n" + RESET)
                 if len(date) == 8 and date.count('-') == 2:
                     day, month, year = date.split('-')
                     if day.isdigit() and month.isdigit() and year.isdigit():
@@ -400,7 +411,7 @@ def main():
                             break
                 print(RED + "Invalid date format or date out of range. Please enter the date in DD-MM-YY format." + RESET)
 
-            activity = input("Enter the activity/game (max 20 characters): \n")[:20]
+            activity = input(LIGHT_CYAN + "Enter the activity/game (max 20 characters): \n" + RESET)[:20]
             add_activity(date, activity)
         elif choice == '2':
             add_players(players)
@@ -413,12 +424,18 @@ def main():
             all_activity_scores()          
             
             # get user input for activity ID, Player name and score
-            print()
-            activity_id = int(input("Enter activity ID: \n"))
+            while True:
+                try:
+                    activity_id = int(input(LIGHT_GREEN + "Enter activity ID: \n" + RESET))
+                    if activity_id < 1 or activity_id > len(activities_data):
+                        raise ValueError("Invalid ID")
+                    break
+                except ValueError:
+                    print(RED + "Invalid ID. Please enter a valid activity ID." + RESET)
 
             for player in players:
                 while True:
-                    player_score = input(f"Enter score for {player}: ")
+                    player_score = input(LIGHT_GREEN + f"Enter score for {player}: " + RESET)
                     try:
                         score = int(player_score)
                         update_scores(activity_id, player, score)
