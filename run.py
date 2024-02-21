@@ -190,6 +190,7 @@ def update_scores(activity_id, player, score):
 
 # Function to calculate overall scores and display the leaderboard
 def calculate_totals():
+    clear_terminal()
     activity_worksheet = SHEET.get_worksheet(0)
     leaderboard_worksheet = SHEET.get_worksheet(1)
 
@@ -260,6 +261,7 @@ def all_activity_scores():
 
 
 def update_activity_ids():
+    clear_terminal()
     worksheet = SHEET.get_worksheet(0)
     activities_data = worksheet.get_all_values()[1:]
     for i, activity in enumerate(activities_data, start=1):
@@ -270,6 +272,7 @@ def update_activity_ids():
 
 
 def edit_or_delete_activity():
+    clear_terminal()
     activities_worksheet = SHEET.get_worksheet(0)
     activities_data = activities_worksheet.get_all_values()[1:]
     activities_headers = activities_worksheet.row_values(1)
