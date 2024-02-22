@@ -29,6 +29,19 @@ LIGHT_YELLOW = '\033[93m'
 
 APP = "Family Cozy Fridays"
 
+TABLE_MAX_LEN = 79
+# Separator line
+LINE = LIGHT_YELLOW + "="*TABLE_MAX_LEN + RESET  # 79 characters long
+
+
+ACTIVITY_MESSAGE = LIGHTGREEN + """
+Now you can add a new activty to the database. \n
+You will be asked to enter a date and activity.
+An ID for this entry will generated automatically.
+""" + RESET
+
+
+
 EXIT_MESSAGE = """
 This App was developed by Edgar Kimbugwe for PP3
 as part of the FULL STACK SOFTWARE DEVELOPMENT DIPLOMA
@@ -51,7 +64,6 @@ def logo():
     """
     clear_terminal()
     print(LIGHT_CYAN + r"""
-
      _____                   ______      _      _                    
     /  __ \                  |  ___|    (_)    | |                   
     | /  \/  ___  ____ _   _ | |_  _ __  _   __| |  __ _  _   _  ___ 
@@ -60,7 +72,6 @@ def logo():
      \____/ \___//___| \__, |\_|  |_|   |_| \__,_| \__,_| \__, ||___/
                         __/ |                              __/ |     
                        |___/                              |___/      
-
     """ + RESET)
     print(LIGHT_GREEN
           + f"Welcome to Family Cozy Fridays."
@@ -70,6 +81,8 @@ def logo():
 
 def add_activity(date, activity):
     clear_terminal()
+    print(ACTIVITY_MESSAGE)
+    print(LINE)
     worksheet = SHEET.get_worksheet(0)
 
     # Find the last non-empty row in the first column
