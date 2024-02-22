@@ -462,6 +462,7 @@ def main():
         elif choice == '3':
             print(SCORES_MESSAGE)
             print(LINE)
+            print()
             # Display list of activities
             print()
             print(LIGHT_CYAN + "Select the activity you want to update scores using the ID No." + RESET)
@@ -472,7 +473,7 @@ def main():
             # get user input for activity ID, Player name and score
             while True:
                 try:
-                    activity_id = int(input(LIGHT_CYAN + "Enter activity ID: \n" + RESET))
+                    activity_id = int(input(LIGHT_CYAN + "Enter activity ID to update scores: \n" + RESET))
                     if activity_id < 1 or activity_id > len(activities_data):
                         raise ValueError("Invalid ID")
                     break
