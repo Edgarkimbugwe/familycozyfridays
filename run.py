@@ -34,7 +34,7 @@ TABLE_MAX_LEN = 79
 LINE = LIGHT_YELLOW + "="*TABLE_MAX_LEN + RESET  # 79 characters long
 
 
-ACTIVITY_MESSAGE = LIGHTGREEN + """
+ACTIVITY_MESSAGE = LIGHT_GREEN + """
 Now you can add a new activty to the database. \n
 You will be asked to enter a date and activity.
 An ID for this entry will generated automatically.
@@ -81,8 +81,6 @@ def logo():
 
 def add_activity(date, activity):
     clear_terminal()
-    print(ACTIVITY_MESSAGE)
-    print(LINE)
     worksheet = SHEET.get_worksheet(0)
 
     # Find the last non-empty row in the first column
@@ -423,6 +421,8 @@ def main():
         clear_terminal()
 
         if choice == '1':
+            print(ACTIVITY_MESSAGE)
+            print(LINE)
             while True:
                 date = input(LIGHT_CYAN + "Enter the date (DD-MM-YY): \n" + RESET)
                 if len(date) == 8 and date.count('-') == 2:
