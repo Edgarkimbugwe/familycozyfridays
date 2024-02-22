@@ -33,13 +33,33 @@ TABLE_MAX_LEN = 79
 # Separator line
 LINE = LIGHT_YELLOW + "="*TABLE_MAX_LEN + RESET  # 79 characters long
 
-
 ACTIVITY_MESSAGE = LIGHT_GREEN + """
 Now you can add a new activty to the database. \n
 You will be asked to enter a date and activity.
 An ID for this entry will generated automatically.
 """ + RESET
 
+PLAYER_MESSAGE = LIGHT_GREEN + """
+Now you can add players, new players to the database. \n
+You can add a maximum of 6 players.
+Each player must have 5 characters
+""" + RESET
+
+SCORES_MESSAGE = LIGHT_GREEN + """
+From the list below, select the activity you want to update scores. \n
+You are required to enter an ID from the list below.
+Enter/Update scores for each player
+""" + RESET
+
+EDIT_DELETE_MESSAGE = LIGHT_GREEN + """
+From the list below, select the activity you want to edit/delete. \n
+You are required to enter an ID from the list below.
+Delete or edit from the choice you make or even abort.
+""" + RESET
+
+DELETE_MESSAGE = LIGHT_GREEN + """
+Select a player to delete from the list below \n
+""" + RESET
 
 
 EXIT_MESSAGE = """
@@ -143,7 +163,7 @@ def add_players(players_list):
 
 
 def delete_player(player, players):
-    clear_terminal()
+    clear_terminal()    
     player_lower = player.strip().lower()
     if player_lower in map(str.lower, players):
         player_index = [i for i, p in enumerate(players) if p.lower() == player_lower][0]
@@ -165,7 +185,7 @@ def delete_player(player, players):
         print()
         print(BLUE + f"Player '{player}' deleted successfully." + RESET)
     else:
-        print(RED + f"Player '{player}' not found. Enter a name from the list above" + RESET)
+        print(RED + f"Player '{player}' not found. Try again" + RESET)
         delete_player(input(LIGHT_CYAN + "\nEnter player name to delete: \n" + RESET), players)
 
 
@@ -436,8 +456,12 @@ def main():
             activity = input(LIGHT_CYAN + "Enter the activity/game (max 20 characters): \n" + RESET)[:20]
             add_activity(date, activity)
         elif choice == '2':
+            print(PLAYER_MESSAGE)
+            print(LINE)
             add_players(players)
         elif choice == '3':
+            print(SCORES_MESSAGE)
+            print(LINE)
             # Display list of activities
             print()
             print(LIGHT_CYAN + "Select the activity you want to update scores using the ID No." + RESET)
@@ -471,11 +495,14 @@ def main():
             print(BLUE + "Collecting data....." + RESET)
             calculate_totals()
         elif choice == '5':
-            print()
+            print(EDIT_DELETE_MESSAGE)
+            print(LINE)
             print(BLUE + "Collecting data....." + RESET)
             print()
             edit_or_delete_activity()
         elif choice == '6':
+            print(DELETE_MESSAGE)
+            print(LINE)
             print("\nCurrent Players:")
             for header in players:
                 print(header)
