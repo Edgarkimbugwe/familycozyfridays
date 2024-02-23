@@ -161,12 +161,12 @@ def add_players(players_list):
         if add_another.lower() != 'y':
             break
 
-        # Update the headers row with the updated list of players
-        header_range = f'A1:{chr(ord("A") + len(existing_headers) - 1)}1'
-        header_cells = worksheet.range(header_range)
-        for i, header in enumerate(existing_headers):
-            header_cells[i].value = header
-        worksheet.update_cells(header_cells)
+    # Update the headers row with the updated list of players
+    header_range = f'A1:{chr(ord("A") + len(existing_headers) - 1)}1'
+    header_cells = worksheet.range(header_range)
+    for i, header in enumerate(existing_headers):
+        header_cells[i].value = header
+    worksheet.update_cells(header_cells)
 
 
 def delete_player(player, players):
@@ -235,6 +235,7 @@ def update_scores(activity_id, player, score):
         worksheet.update_cell(activity_id + 1, player_column, score)
 
 
+
 # Function to calculate overall scores and display the leaderboard
 def calculate_totals():
     clear_terminal()
@@ -293,15 +294,13 @@ def all_activity_scores():
     max_activity_length = max([len(activity[2]) for activity in activities])
     max_date_length = max([len(activity[1]) for activity in activities])
 
-    # Print the header
-    print(
-        "{:<3} {:<{max_date_length}} {:<{max_activity_length}} ".format(
-            "ID", "Date", "Activity",
-            max_date_length=max_date_length,
-            max_activity_length=max_activity_length
-        ), end=""
-    )
-    print()
+    # Print the header with player names
+    header = "{:<3} {:<{max_date_length}} {:<{max_activity_length}} ".format(
+        "ID", "Date", "Activity", max_date_length=max_date_length,
+        max_activity_length=max_activity_length)
+    for player in players:
+        header += "{:<5} ".format(player)
+    print(header)
 
     for idx, activity in enumerate(activities, start=1):
         activity_id, date, activity_name = activity[:3]
@@ -312,8 +311,7 @@ def all_activity_scores():
             "{:<3} {:<{max_date_length}} {:<{max_activity_length}} ".format(
                 activity_id, date, activity_name,
                 max_date_length=max_date_length,
-                max_activity_length=max_activity_length
-            ),
+                max_activity_length=max_activity_length),
             end=""
         )
 
