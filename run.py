@@ -322,7 +322,6 @@ def all_activity_scores():
     and displays them in a tabular format. The table includes the activity ID, date, activity name,
     and scores for each player participating in the activity.
     """
-    clear_terminal()
     activities = SHEET.get_worksheet(0).get_all_values()[1:]
     players = SHEET.get_worksheet(0).row_values(1)[3:]
 
@@ -493,6 +492,8 @@ def edit_or_delete_activity():
                     )  # Add 2 to account for 0-indexing and header row
                     update_activity_ids()
                     print(BLUE + "Activity deleted successfully." + RESET)
+                    print()
+                    all_activity_scores()
                 else:
                     print(BLUE + "Deletion canceled." + RESET)
                 break
