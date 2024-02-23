@@ -21,9 +21,9 @@ The Family Cozy Fridays App was created as Portfolio Project #3 (Python Essentia
         *   [Main menu](#main-menu)
         *   [Add activity](#add-activity)
         *   [Add Player](#add-player)
-        *   [Update Scores](#updaate-scores)
+        *   [Update Scores](#update-scores)
         *   [Leaderboard](#leaderboard)
-        *   [Edit/Delete Activity](#edit/delete-activity)
+        *   [Edit Delete Activity](#edit-delete-activity)
         *   [Delete Player](#delete-player)
         *   [Exit](#exit)
 *   [Technology](#technology)
@@ -150,7 +150,7 @@ Displays the current leaderboard, showing the ranking of players based on their 
 
 ![leaderboard](views/images/leaderboard1.png)
 
-### Edit/Delete Activity
+### Edit Delete Activity
 
 Allows users to edit or delete a previously added activity. Users can select the activity ID and choose to edit the date or activity name, or delete the entire activity. At this point, t he user can entirely abort a session. 
 
