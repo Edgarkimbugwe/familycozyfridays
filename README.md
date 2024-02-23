@@ -238,9 +238,13 @@ Fixed updating scores with a wrong ID input
 
 ### PEP8
 
-[PEP8CI](https://pep8ci.herokuapp.com/) app was used to lint the code.
-There are some warnings for whitespaces and escape character in app logo created in "text to ASCII generator". 
-This doesn't affect any functionalities of the application and code is interpreted as intended, terminal output is displayed as intended.
+[PEP8CI](https://pep8ci.herokuapp.com/) app was used to lint the code and upun running the codes for testing there were some warnings for whitespaces and long characters used
+
+Testing before the errors were fixed
+
+![pep8_validation](views/images/testing_errors.png)
+
+Testing after errors are fixed
 
 ![pep8_validation](views/images/testing_all_clear.png)
 
