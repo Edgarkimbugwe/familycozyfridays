@@ -207,7 +207,6 @@ def delete_player(player, players):
 
 # Function to update scores for a specific activity
 def update_scores(activity_id, player, score):
-    clear_terminal()
     # Get the Activity_scores worksheet
     worksheet = SHEET.get_worksheet(0)
 
@@ -575,6 +574,7 @@ def main():
             # get user input for activity ID, Player name and score
             while True:
                 try:
+                    print()
                     activity_id = int(
                         input(
                             LIGHT_CYAN +
