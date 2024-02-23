@@ -4,7 +4,7 @@ import sys
 import datetime
 from google.oauth2.service_account import Credentials
 
-
+# Constants
 SCOPE = [
     "https://www.googleapis.com/auth/spreadsheets",
     "https://www.googleapis.com/auth/drive.file",
@@ -31,7 +31,7 @@ APP = "Family Cozy Fridays"
 
 TABLE_MAX_LEN = 79
 # Separator line
-LINE = LIGHT_YELLOW + "="*TABLE_MAX_LEN + RESET  # 79 characters long
+LINE = LIGHT_YELLOW + "="*TABLE_MAX_LEN + RESET  # Separator line
 
 ACTIVITY_MESSAGE = LIGHT_GREEN + """
 Now you can add a new activty to the database. \n
@@ -72,12 +72,14 @@ https://github.com/Edgarkimbugwe
 www.linkedin.com/in/edgar-kimbugwe-b87687296
 """
 
-
+# Utility function
 def clear_terminal():
+    """Clear the terminal screen."""
     os.system("cls" if os.name == "nt" else "clear")
 
 
 def logo():
+    """Display the application logo and welcome message."""
     clear_terminal()
     print(LIGHT_CYAN + r"""
      _____                   ______      _      _
@@ -96,6 +98,13 @@ def logo():
 
 
 def add_activity(date, activity):
+    """
+    Add a new activity to the worksheet.
+
+    Args:
+        date (str): The date of the activity in DD-MM-YY format.
+        activity (str): The name of the activity.
+    """
     clear_terminal()
     worksheet = SHEET.get_worksheet(0)
 
@@ -117,6 +126,9 @@ def add_activity(date, activity):
 
 
 def add_players(players_list):
+    """
+    Add new players to the worksheet.
+    """
     clear_terminal()
     worksheet = SHEET.get_worksheet(0)
 
@@ -170,6 +182,9 @@ def add_players(players_list):
 
 
 def delete_player(player, players):
+    """
+    Delete a player from the worksheet.
+    """
     clear_terminal()
     player_lower = player.strip().lower()
     if player_lower in map(str.lower, players):
@@ -207,6 +222,14 @@ def delete_player(player, players):
 
 # Function to update scores for a specific activity
 def update_scores(activity_id, player, score):
+    """
+    Update the score for a player in a specific activity.
+
+    Args:
+        activity_id (int): The ID of the activity to update (row index in the worksheet).
+        player (str): The name of the player whose score is being updated.
+        score (int): The new score for the player in the specified activity.
+    """
     # Get the Activity_scores worksheet
     worksheet = SHEET.get_worksheet(0)
 
@@ -238,6 +261,12 @@ def update_scores(activity_id, player, score):
 
 # Function to calculate overall scores and display the leaderboard
 def calculate_totals():
+    """
+    Calculate the total scores for each player across all activities and update the leaderboard.
+
+    This function reads the 'activity_score' worksheet to calculate the total scores for each player,
+    then updates the 'leaderboard' worksheet with the sorted list of players and their total scores.
+    """
     clear_terminal()
     activity_worksheet = SHEET.get_worksheet(0)
     leaderboard_worksheet = SHEET.get_worksheet(1)
@@ -286,6 +315,13 @@ def calculate_totals():
 
 
 def all_activity_scores():
+    """
+    Display all activity scores with corresponding player names in a tabular format.
+
+    This function retrieves all activities and their scores from the 'activity_score' worksheet
+    and displays them in a tabular format. The table includes the activity ID, date, activity name,
+    and scores for each player participating in the activity.
+    """
     clear_terminal()
     activities = SHEET.get_worksheet(0).get_all_values()[1:]
     players = SHEET.get_worksheet(0).row_values(1)[3:]
@@ -321,6 +357,14 @@ def all_activity_scores():
 
 
 def update_activity_ids():
+    """
+    Update activity IDs in the 'activity_score' worksheet to match their current position.
+
+    This function iterates through all activities in the 'activity_score' worksheet
+    and checks if their IDs match their current position in the worksheet. If an
+    activity's ID does not match its position, the function updates the ID to match
+    the current position.
+    """
     clear_terminal()
     worksheet = SHEET.get_worksheet(0)
     activities_data = worksheet.get_all_values()[1:]
@@ -332,6 +376,15 @@ def update_activity_ids():
 
 
 def edit_or_delete_activity():
+    """
+    Allows the user to edit or delete an activity from the 'activity_scores' worksheet.
+
+    This function prompts the user to enter the ID of the activity they want to edit or 
+    delete. It then allows the user to choose between editing the activity's details 
+    (date and name), deleting the activity, or aborting the operation. The function 
+    ensures the user confirms the deletion action and provides feedback on the 
+    success or cancellation of the operation.
+    """
     clear_terminal()
     activities_worksheet = SHEET.get_worksheet(0)
     activities_data = activities_worksheet.get_all_values()[1:]
@@ -505,6 +558,11 @@ def exit_app():
 
 # Main function to handle user input
 def main():
+    """
+    Displays a menu and handles user input for various operations
+    This function continuously displays the menu and prompts the user to enter a choice.
+    Calls the corresponding function to perform the selected operation.
+    """
     logo()
     players = SHEET.get_worksheet(0).row_values(1)[3:]
     activities_data = SHEET.get_worksheet(0).get_all_values()[1:]
