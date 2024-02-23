@@ -31,8 +31,6 @@ The Family Cozy Fridays App was created as Portfolio Project #3 (Python Essentia
     *   [Python libraries/modules](#python-librariesmodules)
 *   [Testing](#testing)
     *   [Validation](#validation)
-    *   [Manual testing](#manual-testing)
-    *   [Bugs / Unsolved Issues](#bugs--unsolved-issues)
 *   [Deployment](#deployment)
     *   [Git and GitHub](#git-and-github)
     *   [Deployment to Heroku](#deployment-to-heroku)
@@ -122,7 +120,7 @@ Overall, the app's data structure in Google Sheets allows for the efficient mana
 
 ### Main menu
 
-The application's start screen consists of ASCII logo generated from ![Patorjk](https://patorjk.com/software/taag/#p=display&h=2&v=0&f=Doom&t=FamilyCozyFridays), welcome message and 
+The application's start screen consists of ASCII logo generated from [Patorjk](https://patorjk.com/software/taag/#p=display&h=2&v=0&f=Doom&t=FamilyCozyFridays), welcome message and 
 a main menu of 7 options.
 
 ![main-menu](views/images/menu.png)
@@ -132,10 +130,6 @@ a main menu of 7 options.
 Allows users to add a new activity for their family game night. Users can enter the date and the name of the activity, and the app will assign a unique ID to the activity. The activity input has to allow 20 characters and for the date, the input has to be in the format of DD-MM-YY. Also numbers outside range are invalid as viwed in the image for invalid date. 
 
 ![add_activity](views/images/add_activity.png)
-
-Invalid date entered in the date area
-
-![wrong date](views/images/wrong_date_rectified.png)
 
 
 ### Add Player
@@ -217,3 +211,105 @@ Allows users to exit the app. Users are prompted to confirm their choice before 
 - [os](https://docs.python.org/3/library/os.html) - used to write clear_terminal function to create a cleaner interface.
 
 
+# Testing
+
+Throughout the building process, mannual testing was being carriend out and that is how most of the bugs encountered were being fixed. Example images below show some of the fixes problems encountered and fixes done. 
+
+The user could enter a wrong date format and be registred to the database
+
+![wrong date](views/images/wrong_date.png)
+
+User gets warning if they enter a wrong date format and cannot bypass this step as before. 
+
+![wrong date rectified](views/images/wrong_date_rectified.png)
+
+Also another issue that was fixed is that when the user wanted to update scores, s/he could input a non exitent ID from the database. Scores entered could regester to the terminal without a date and activity registered. 
+
+Update scores with a wrong ID input
+
+![update without id](views/images/non_existing_id.png)
+
+Fixed updating scores with a wrong ID input
+
+![update without id fixed](views/images/non_existing_id_fixed.png)
+
+
+## Validation 
+
+### PEP8
+
+[PEP8CI](https://pep8ci.herokuapp.com/) app was used to lint the code.
+There are some warnings for whitespaces and escape character in app logo created in "text to ASCII generator". 
+This doesn't affect any functionalities of the application and code is interpreted as intended, terminal output is displayed as intended.
+
+![pep8_validation](views/images/testing_all_clear.png)
+
+
+#   Deployment
+
+## Git and GitHub
+
+1. To create GitHub public repository [family-cozy-fridays](https://github.com/Edgarkimbugwe/familycozyfridays), [Code Institute template](https://github.com/Code-Institute-Org/python-essentials-template) was used by selecting "use this template" --> "create new repository".
+
+2. Using Githun, clone repository to the local machine.
+3. Commands below were used to add, commit and push changes:
+    - git add .
+    - git commit -m "Do something"
+    - git push
+    Also:
+    - clear (for clearing the terminal)
+    - git status (to check if the app is up to date and working tree is clean)
+
+4. Make sure all libraries and packages are listed in requirements.txt..
+
+5. When the program is ready for deployment, visit heroku.com to deploy it on Heroku.
+
+## Deployment to Heroku
+
+1. Navigate to [https://heroku.com/](https://heroku.com/) and open dashboard. Select "New", then "Create new app" button.
+
+2. Enter app name, chose region, and click on "Create app" button
+
+3. Then "Deploy" tab to "Deployment method" section to authorize and connect to the GitHub account.
+
+4. Then, select main branch from repository.
+
+5. Then go to "Settings" tab.
+
+6. Go to the "Buildpacks" section. Add the Python and Node.js buildpacks, ensuring the correct order.
+
+7. Proceed to the "Config Vars" section and add a key called "CREDS" that matches the token name defined in the Python constant in [api/google_sheets_api.py]. Set the value to your credentials token (copy and paste).
+
+8. Add a key called "PORT" with the value "8080" and save your changes.
+
+6. Return to the "Deploy" tab, chose to use manual or automatic deploys.
+
+7. The link to the deployed app is then displayed on the screen: https://family-cozy-fridays-bbda74529780.herokuapp.com/ where you can then visit the app. 
+
+
+# Possible future development
+
+- Data Collection: To collect valuable data on user activities and preferences, which can be used to improve the app and tailor future updates to better suit user needs.
+
+- Monetization: To monetize the app through advertisements, premium features, or partnerships with gaming or family-oriented brands.
+
+- User Accounts: User authentication and accounts for personalized score tracking.
+
+- Notifications: Reminders and notifications for upcoming game nights.
+
+- Integration with Online Platforms: Integration with online gaming platforms for automated score tracking.
+
+- Data Analysis: Advanced data analysis and visualization tools for insights into game night trends and performance.
+
+## Resources, Credits and Acknowledgements
+
+- Code Institute "Love Sandwiches" walk-through project and the Slack Community for insightful solutions to different challenges during the project.
+- Python Tutorial: Python Full Course for Beginners | Programming with Mosh
+- Automate the Boring Stuff with Python by Al Sweigart 
+- Python Crash Course by Eric Matthes 
+- Learn Python in 2023 | TechWorld with Nana
+- Google Sheets API Documentation, to understand the API's features and how to integrate them into the application.
+- Python Colorama Tutorial | Tech Notebook
+- Python Full Course for free | Bro Code
+- How to create ASCII art text in Python | Coding Professor
+- My mentor Spencer Barriball for all the support, guidance and suggestions. 

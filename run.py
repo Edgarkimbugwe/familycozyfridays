@@ -78,24 +78,20 @@ def clear_terminal():
 
 
 def logo():
-    """
-    Logo generated from 
-    https://patorjk.com/software/taag/#p=display&h=2&v=0&f=Doom&t=FamilyCozyFridays
-    """
     clear_terminal()
     print(LIGHT_CYAN + r"""
-     _____                   ______      _      _                    
-    /  __ \                  |  ___|    (_)    | |                   
-    | /  \/  ___  ____ _   _ | |_  _ __  _   __| |  __ _  _   _  ___ 
+     _____                   ______      _      _
+    /  __ \                  |  ___|    (_)    | |
+    | /  \/  ___  ____ _   _ | |_  _ __  _   __| |  __ _  _   _  ___
     | |     / _ \|_  /| | | ||  _|| '__|| | / _` | / _` || | | |/ __|
     | \__/\| (_) |/ / | |_| || |  | |   | || (_| || (_| || |_| |\__ \
      \____/ \___//___| \__, |\_|  |_|   |_| \__,_| \__,_| \__, ||___/
-                        __/ |                              __/ |     
-                       |___/                              |___/      
+                        __/ |                              __/ |
+                       |___/                              |___/
     """ + RESET)
     print(LIGHT_GREEN
           + f"Welcome to Family Cozy Fridays."
-            f"\nAn app to store all your activities/scores while playing games with family" 
+            f"\nAn app to store activities/scores while playing games"
             f"\nPlease make use of the Menu below." + RESET)
 
 
@@ -127,7 +123,8 @@ def add_players(players_list):
     existing_headers = worksheet.row_values(1)
 
     # Display existing player names
-    print(BLUE + "\nAlready existing player names:" + RESET, ", ".join(existing_headers[3:]))
+    print(BLUE + "\nAlready existing player names:" + RESET, end=" ")
+    print(", ".join(existing_headers[3:]))
 
     # Check if the number of existing players is already 6
     if len(existing_headers[3:]) >= 6:
@@ -136,7 +133,9 @@ def add_players(players_list):
 
     # Prompt the user to add new player names
     while True:
-        new_player = input(LIGHT_CYAN + "\nEnter player name (max 5 characters): \n" + RESET)
+        new_player = input(
+            LIGHT_CYAN + "\nEnter player name (max 5 characters): \n" + RESET
+        )
         new_player = new_player.strip()[:5]
 
         if new_player.lower() in map(str.lower, existing_headers):
@@ -147,31 +146,45 @@ def add_players(players_list):
             print(BLUE + f"Player '{new_player}' added successfully." + RESET)
 
         if len(existing_headers[3:]) >= 6:
-            print(RED + "You have reached the maximum number of players (6)." + RESET)
+            print(
+                RED +
+                "You have reached the maximum number of players (6)."
+                + RESET
+            )
             break
 
-        add_another = input(LIGHT_CYAN + "\nDo you want to add another player? (Y/N): \n" + RESET)
+        add_another = input(
+            LIGHT_CYAN +
+            "\nDo you want to add another player? (Y/N): \n"
+            + RESET
+        )
         if add_another.lower() != 'y':
             break
 
-    # Update the headers row with the updated list of players
-    header_range = f'A1:{chr(ord("A") + len(existing_headers) - 1)}1'
-    header_cells = worksheet.range(header_range)
-    for i, header in enumerate(existing_headers):
-        header_cells[i].value = header
-    worksheet.update_cells(header_cells)
+        # Update the headers row with the updated list of players
+        header_range = f'A1:{chr(ord("A") + len(existing_headers) - 1)}1'
+        header_cells = worksheet.range(header_range)
+        for i, header in enumerate(existing_headers):
+            header_cells[i].value = header
+        worksheet.update_cells(header_cells)
 
 
 def delete_player(player, players):
-    clear_terminal()    
+    clear_terminal()
     player_lower = player.strip().lower()
     if player_lower in map(str.lower, players):
-        player_index = [i for i, p in enumerate(players) if p.lower() == player_lower][0]
-        player_column = player_index + 4  # Adjusted for the offset of player names starting from the 4th column
+        player_index = [
+            i for i, p in enumerate(players) if p.lower() == player_lower][0]
+        player_column = player_index + 4
         activity_worksheet = SHEET.get_worksheet(0)
 
         # Ask for confirmation before deleting the player
-        confirm = input(RED + f"All score data for '{players[player_index]}' will be lost. Are you sure you want to delete'{players[player_index]}'? (Y/N): \n" + RESET).lower()
+        confirm = input(
+            RED + f"All score data for '{players[player_index]}' will be lost."
+            f"Are you sure you want to delete'{players[player_index]}'?"
+            f"(Y/N): \n"
+            + RESET
+        ).lower()
         if confirm != 'y':
             print(BLUE + "Deletion canceled." + RESET)
             return
@@ -186,7 +199,10 @@ def delete_player(player, players):
         print(BLUE + f"Player '{player}' deleted successfully." + RESET)
     else:
         print(RED + f"Player '{player}' not found. Try again" + RESET)
-        delete_player(input(LIGHT_CYAN + "\nEnter player name to delete: \n" + RESET), players)
+        delete_player(
+            input(LIGHT_CYAN + "\nEnter name to delete: \n" + RESET),
+            players
+        )
 
 
 # Function to update scores for a specific activity
@@ -226,7 +242,7 @@ def calculate_totals():
     activity_worksheet = SHEET.get_worksheet(0)
     leaderboard_worksheet = SHEET.get_worksheet(1)
 
-    # Get the list of player names from the first row of the 'activity_score' worksheet
+    # List of player names from the first row of the 'activity_score' worksheet
     players = activity_worksheet.row_values(1)[3:]
 
     # Initialize a dictionary to store total scores for each player
@@ -243,18 +259,19 @@ def calculate_totals():
                 continue
 
     # Sort players by their total scores in descending order
-    sorted_players = sorted(total_scores.items(), key=lambda x: x[1], reverse=True)
+    sorted_players = sorted(
+        total_scores.items(), key=lambda x: x[1], reverse=True)
 
-    # Update the leaderboard worksheet with the sorted players and their total scores
+    # Update leaderboard worksheet: Sort players and their total scores
     print()
     print(BLUE + "Updating total scores and ranking the players...." + RESET)
     print()
     leaderboard_worksheet.clear()
     leaderboard_worksheet.append_row(['Position', 'Name', 'Total score'])
-    
+
     # Calculate the maximum length of player names for formatting
     max_name_length = max([len(player) for player, _ in sorted_players])
-    
+
     for i, (player, total_score) in enumerate(sorted_players, start=1):
         # Format the output to align the scores
         indent = max_name_length - len(player) + 5
@@ -263,8 +280,10 @@ def calculate_totals():
         leaderboard_worksheet.append_row([i, player, total_score])
 
     print()
-    print(BLUE + "Total scores calculated and updated to the leaderboard worksheet." + RESET)
-    
+    print(
+        BLUE + "Total scores calculated and updated to the leaderboard " +
+        "worksheet." + RESET)
+
 
 def all_activity_scores():
     clear_terminal()
@@ -276,17 +295,29 @@ def all_activity_scores():
     max_date_length = max([len(activity[1]) for activity in activities])
 
     # Print the header
-    print("{:<3} {:<{max_date_length}} {:<{max_activity_length}} ".format("ID", "Date", "Activity", max_date_length=max_date_length, max_activity_length=max_activity_length), end="")
-    for player in players:
-        print("{:<5} ".format(player), end="")
+    print(
+        "{:<3} {:<{max_date_length}} {:<{max_activity_length}} ".format(
+            "ID", "Date", "Activity",
+            max_date_length=max_date_length,
+            max_activity_length=max_activity_length
+        ), end=""
+    )
     print()
 
     for idx, activity in enumerate(activities, start=1):
         activity_id, date, activity_name = activity[:3]
-        scores = activity[3:]                
+        scores = activity[3:]
 
         # Print the activity details
-        print("{:<3} {:<{max_date_length}} {:<{max_activity_length}} ".format(activity_id, date, activity_name, max_date_length=max_date_length, max_activity_length=max_activity_length), end="")
+        print(
+            "{:<3} {:<{max_date_length}} {:<{max_activity_length}} ".format(
+                activity_id, date, activity_name,
+                max_date_length=max_date_length,
+                max_activity_length=max_activity_length
+            ),
+            end=""
+        )
+
         for score in scores:
             print("{:<5} ".format(score), end="")
         print()
@@ -316,10 +347,16 @@ def edit_or_delete_activity():
         # Get the ID of the activity to edit or delete
         while True:
             try:
-                activity_id = int(input(LIGHT_CYAN + "\nEnter the ID of the activity to edit/delete: " + RESET))
+                activity_id = int(
+                    input(
+                        LIGHT_CYAN +
+                        "\nEnter the ID of the activity to edit/delete: " +
+                        RESET
+                    )
+                )
                 if not 1 <= activity_id <= len(activities_data):
                     raise ValueError("Invalid ID")
-                break  # Exit the loop if input is successfully converted to an integer
+                break  # Exit the loop if input is converted to an integer
             except ValueError:
                 print(RED + "Please enter a valid integer ID." + RESET)
 
@@ -339,31 +376,54 @@ def edit_or_delete_activity():
             print(f"{header}: {activities_data[activity_index][i]}")
 
         while True:
-            choice = input(LIGHT_CYAN + "\nDo you want to edit or delete this activity? (edit/delete/abort): " + RESET)
+            choice = input(
+                LIGHT_CYAN +
+                "\nDo you want to edit or delete this activity? " +
+                "(edit/delete/abort): "
+                + RESET
+            )
             if choice.lower() == "edit":
                 # Edit the activity
                 print("\nEnter the new details for the activity:")
                 while True:
-                    new_date = input(LIGHT_CYAN + "Enter the new date (DD-MM-YY): \n" + RESET)
+                    new_date = input(
+                        LIGHT_CYAN + "Enter the new date (DD-MM-YY): \n"
+                        + RESET
+                    )
                     if len(new_date) == 8 and new_date.count('-') == 2:
                         day, month, year = new_date.split('-')
-                        if day.isdigit() and month.isdigit() and year.isdigit():
+                        if day.isdigit() and \
+                                month.isdigit() and \
+                                year.isdigit():
                             day, month, year = int(day), int(month), int(year)
                             if 1 <= month <= 12 and 1 <= day <= 31:
                                 break
-                    print(RED + "Invalid date format or date out of range. Please enter the date in DD-MM-YY format." + RESET)
+                    print(
+                        RED + "Invalid date format or date out of range. " +
+                        "Please enter the date in DD-MM-YY format." + RESET
+                    )
 
-                new_activity = input(LIGHT_CYAN + "Enter the new activity name (max 20 characters): \n" + RESET)[:20]
+                new_activity = input(
+                    LIGHT_CYAN +
+                    "Enter the new activity name (max 20 characters): \n"
+                    + RESET)[:20]
 
                 # Confirm the changes
-                confirm_changes = input(LIGHT_CYAN + "\nAre you sure you want to make these changes? (Y/N): " + RESET).lower()
+                confirm_changes = input(
+                    LIGHT_CYAN +
+                    "\nAre you sure you want to make these changes? (Y/N): "
+                    + RESET
+                ).lower()
                 if confirm_changes == 'y':
                     # Update the activity details
                     activities_data[activity_index][1] = new_date
                     activities_data[activity_index][2] = new_activity
 
                     # Update the worksheet
-                    activities_worksheet.update([activities_data[activity_index][1:3]], f"B{activity_index + 2}:C{activity_index + 2}")
+                    activities_worksheet.update(
+                        [activities_data[activity_index][1:3]],
+                        f"B{activity_index + 2}:C{activity_index + 2}"
+                    )
 
                     print(BLUE + "Activity updated successfully." + RESET)
                 else:
@@ -371,10 +431,16 @@ def edit_or_delete_activity():
                 break
             elif choice.lower() == "delete":
                 # Warn the user before deletion
-                confirm_delete = input(RED + "Warning: This action cannot be undone. Are you sure you want to delete this activity? (Y/N): " + RESET).lower()
+                confirm_delete = input(
+                    RED + "Warning: This action cannot be undone. " +
+                    "Are you sure you want to delete this activity? (Y/N): "
+                    + RESET
+                ).lower()
                 if confirm_delete == 'y':
                     # Delete the activity
-                    activities_worksheet.delete_rows(activity_index + 2)  # Add 2 to account for 0-indexing and header row
+                    activities_worksheet.delete_rows(
+                        activity_index + 2
+                    )  # Add 2 to account for 0-indexing and header row
                     update_activity_ids()
                     print(BLUE + "Activity deleted successfully." + RESET)
                 else:
@@ -384,11 +450,20 @@ def edit_or_delete_activity():
                 print(BLUE + "Operation aborted." + RESET)
                 break
             else:
-                print(RED + "Invalid choice. Please enter 'edit', 'delete', or 'abort'." + RESET)
+                print(
+                    RED + "Invalid choice. " +
+                    "Please enter 'edit', 'delete', or 'abort'."
+                    + RESET
+                )
 
-        # Ask if the user wants to edit/delete another activity or return to the main menu
+        # Ask if the user wants to edit/delete another activity
+        # Or return to the main menu
         while True:
-            another = input(LIGHT_CYAN + "\nDo you want to edit/delete another activity? (Y/N): " + RESET).lower()
+            another = input(
+                LIGHT_CYAN +
+                "\nDo you want to edit/delete another activity? " +
+                "(Y/N): " + RESET
+            ).lower()
             if another == 'y':
                 break
             elif another == 'n':
@@ -400,9 +475,13 @@ def edit_or_delete_activity():
 def exit_app():
     """
     This function displays an exit message to the user.
-    The user is asked to confirm the selected option. 
+    The user is asked to confirm the selected option.
     """
-    confirm = input(LIGHT_CYAN + "Are you sure you want to quit? (Y/N): \n" + RESET).lower()
+    confirm = input(
+        LIGHT_CYAN +
+        "Are you sure you want to quit? (Y/N): \n"
+        + RESET
+    ).lower()
     if confirm == 'y':
         print()
         print()
@@ -410,10 +489,15 @@ def exit_app():
         print(EXIT_MESSAGE)
         today = datetime.date.today()
         print(today)
-        print(LIGHT_YELLOW + "\nCome back again when you are ready to store more scores" + RESET)
+        print(
+            LIGHT_YELLOW +
+            "\nCome back again when you are ready to store more scores"
+            + RESET
+        )
         print()
         print()
-        # Close the database connection and ensure that all data is properly saved before exit.
+        # Close the database connection
+        # And ensure that all data is properly saved before exit.
         sys.exit(0)
     elif confirm == 'n':
         main()  # Redirect the user to the main menu
@@ -444,16 +528,29 @@ def main():
             print(ACTIVITY_MESSAGE)
             print(LINE)
             while True:
-                date = input(LIGHT_CYAN + "Enter the date (DD-MM-YY): \n" + RESET)
+                date = input(
+                    LIGHT_CYAN +
+                    "Enter the date (DD-MM-YY): \n"
+                    + RESET
+                )
                 if len(date) == 8 and date.count('-') == 2:
                     day, month, year = date.split('-')
                     if day.isdigit() and month.isdigit() and year.isdigit():
                         day, month, year = int(day), int(month), int(year)
                         if 1 <= month <= 12 and 1 <= day <= 31:
                             break
-                print(RED + "Invalid date format or date out of range. Please enter the date in DD-MM-YY format." + RESET)
+                print(
+                    RED +
+                    "Invalid date format or date out of range. " +
+                    "Please enter the date in DD-MM-YY format."
+                    + RESET
+                )
 
-            activity = input(LIGHT_CYAN + "Enter the activity/game (max 20 characters): \n" + RESET)[:20]
+            activity = input(
+                LIGHT_CYAN +
+                "Enter the activity/game (max 20 characters): \n"
+                + RESET
+            )[:20]
             add_activity(date, activity)
         elif choice == '2':
             print(PLAYER_MESSAGE)
@@ -465,30 +562,53 @@ def main():
             print()
             # Display list of activities
             print()
-            print(LIGHT_CYAN + "Select the activity you want to update scores using the ID No." + RESET)
+            print(
+                LIGHT_CYAN +
+                "Select the activity you want to update" +
+                "scores using the ID No."
+                + RESET
+            )
             print()
 
-            all_activity_scores()          
-            
+            all_activity_scores()
+
             # get user input for activity ID, Player name and score
             while True:
                 try:
-                    activity_id = int(input(LIGHT_CYAN + "Enter activity ID to update scores: \n" + RESET))
+                    activity_id = int(
+                        input(
+                            LIGHT_CYAN +
+                            "Enter activity ID to update scores: \n"
+                            + RESET
+                            )
+                    )
                     if activity_id < 1 or activity_id > len(activities_data):
                         raise ValueError("Invalid ID")
                     break
                 except ValueError:
-                    print(RED + "Invalid ID. Please enter a valid activity ID." + RESET)
+                    print(
+                        RED +
+                        "Invalid ID. Please enter a valid activity ID."
+                        + RESET
+                    )
 
             for player in players:
                 while True:
-                    player_score = input(LIGHT_CYAN + f"Enter score for {player}: " + RESET)
+                    player_score = input(
+                        LIGHT_CYAN +
+                        f"Enter score for {player}: "
+                        + RESET
+                    )
                     try:
                         score = int(player_score)
                         update_scores(activity_id, player, score)
                         break
                     except ValueError:
-                        print(RED + "Please enter a valid score (integer)." + RESET)
+                        print(
+                            RED +
+                            "Please enter a valid score (integer)."
+                            + RESET
+                        )
             print()
             print(BLUE + "All scores updated for this activity." + RESET)
         elif choice == '4':
@@ -507,7 +627,11 @@ def main():
             print("\nCurrent Players:")
             for header in players:
                 print(header)
-            player = input(LIGHT_CYAN + "\nEnter player name to delete: \n" + RESET)
+            player = input(
+                LIGHT_CYAN +
+                "\nEnter player name to delete: \n"
+                + RESET
+                )
             print()
             print(BLUE + f"Deleting '{player}'......" + RESET)
             delete_player(player.lower(), players)
@@ -517,6 +641,7 @@ def main():
             break
         else:
             print(RED + "Invalid choice, please try again." + RESET)
+
 
 if __name__ == "__main__":
     main()
